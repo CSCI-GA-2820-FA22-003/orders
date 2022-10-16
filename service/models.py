@@ -5,6 +5,7 @@ All of the models are stored in this module
 """
 import logging
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
 
 logger = logging.getLogger("flask.app")
 
@@ -78,6 +79,74 @@ class YourResourceModel(db.Model):
             )
         return self
 
+
+#  ORDER DB MODEL
+
+class Order(db.Model):
+
+    app = None
+
+    # Order Table Schema
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(63))
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
+    address = db.Column(db.String(63), db.ForeignKey('customer.address'))
+    date_created = db.Column(db.Date(), nullable=False, default=date.today())
+    items = db.relationship("Item", backref="order", passive_deletes=True)
+
+    def __repr__(self):
+        return "<Order id=[%s]\t name=[%s]\t customer_id=[%s]\t address=[%s]\t date_created=[%s]\t items=[%s]>" % (self.id, self.name, self.customer_id, self.address, self.date_created, self.items)
+
+    def create(self):
+        logger.info("Creating %s", self.name)
+        self.id = None  # id must be none to generate next primary key
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        logger.info("Saving %s", self.name)
+        db.session.commit()
+
+    def delete(self):
+        logger.info("Deleting %s", self.name)
+        db.session.delete(self)
+        db.session.commit()
+
+    def serialize(self):
+        order = {
+            "id": self.id,
+            "name": self.name,
+            "customer_id": self.customer_id,
+            "address": self.address,
+            "date_created": self.date_joined.isoformat(),
+            "items": [],
+        }
+        for item in self.items:
+            order["items"].append(item.serialize())
+        return order
+
+    def deserialize(self, data):
+        try:
+            self.name = data["name"]
+            self.customer_id = data["customer_id"]
+            self.address = data.get("address")
+            self.date_created = date.fromisoformat(data["date_created"])
+            order_list = data.get("items")
+            for json_item in order_list:
+                item = Item() #Item db-model
+                item.deserialize(json_item)
+                self.items.append(item)
+        except KeyError as error:
+            raise DataValidationError("Invalid order: missing " + error.args[0]) from error
+        except TypeError as error:
+            raise DataValidationError(
+                "Invalid order: body of request contained "
+                "bad or no data - " + error.args[0]
+            ) from error
+        return self
+
+    
+
     @classmethod
     def init_db(cls, app):
         """ Initializes the database session """
@@ -109,3 +178,4 @@ class YourResourceModel(db.Model):
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
+
