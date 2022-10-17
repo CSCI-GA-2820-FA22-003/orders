@@ -49,7 +49,7 @@ def get_orders(order_id):
     This endpoint will return an Order based on it's id
     """
     app.logger.info("Request for order with id: %s", order_id)
-    order = Item.find(order_id)
+    order = Order.find(order_id)
     if not order:
         abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
 
