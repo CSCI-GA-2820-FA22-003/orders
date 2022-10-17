@@ -6,7 +6,8 @@ Describe what your service does here
 
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from .common import status  # HTTP Status Codes
-from service.models import YourResourceModel
+from service.models import Item
+from service.models import Order
 
 # Import Flask application
 from . import app
@@ -32,4 +33,5 @@ def index():
 def init_db():
     """ Initializes the SQLAlchemy app """
     global app
-    YourResourceModel.init_db(app)
+    Item.init_db(app)
+    Order.init_db(app)
