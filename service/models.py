@@ -60,7 +60,7 @@ class Item(db.Model):
 
     def serialize(self):
         """ Serializes a Item into a dictionary """
-        return {"id": self.id, "product_id": self.product_id, "price": self.price, 'quantity': self.quantity, 'order': self.order_id}
+        return {"id": self.id, "product_id": self.product_id, "price": self.price, 'quantity': self.quantity, 'order_id': self.order_id}
 
     def deserialize(self, data):
         """
@@ -108,15 +108,15 @@ class Item(db.Model):
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
-    @classmethod
-    def find_by_name(cls, name):
-        """Returns all Item with the given name
+    # @classmethod
+    # def find_by_name(cls, name):
+    #     """Returns all Item with the given name
 
-        Args:
-            name (string): the name of the Item you want to match
-        """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+    #     Args:
+    #         name (string): the name of the Item you want to match
+    #     """
+    #     logger.info("Processing name query for %s ...", name)
+    #     return cls.query.filter(cls.name == name)
 
 
 class Order(db.Model):
@@ -128,7 +128,6 @@ class Order(db.Model):
     name = db.Column(db.String(63))
     address = db.Column(db.String(63), default="Invalid Address")
     date_created = db.Column(db.Date(), nullable=False, default=date.today())
-    items = db.relationship("Item", backref="order", passive_deletes=True)
 
     def __repr__(self):
         return "<Order id=[%s]\t name=[%s]\t address=[%s]\t date_created=[%s]\t items=[%s]>" % (self.id, self.name, self.address, self.date_created, self.items)
@@ -154,17 +153,15 @@ class Order(db.Model):
             "name": self.name,
             "address": self.address,
             "date_created": self.date_created.isoformat(),
-            "items": [],
         }
-        for item in self.items:
-            order["items"].append(item.serialize())
         return order
 
     def deserialize(self, data):
         try:
             self.name = data["name"]
             self.address = data["address"]
-            self.date_created = date.fromisoformat(data["date_created"])
+            if "date_created" in data.keys():
+                self.date_created = date.fromisoformat(data["date_created"])
             order_list = data.get("items")
             for json_item in order_list:
                 item = Item() #Item db-model
