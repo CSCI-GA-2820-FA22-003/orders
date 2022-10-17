@@ -74,7 +74,7 @@ def create_orders():
     message = order.serialize()
     location_url = url_for("get_orders", order_id=order.id, _external=True)
 
-    app.logger.info("Item with ID [%s] created.", order.id)
+    app.logger.info("Order with ID [%s] created.", order.id)
 
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
