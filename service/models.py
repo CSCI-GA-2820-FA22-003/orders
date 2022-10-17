@@ -215,9 +215,6 @@ class Item(db.Model):
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
-    
-
-#  ORDER DB MODEL
 
 class Order(db.Model):
 
@@ -304,3 +301,4 @@ class Order(db.Model):
     def find_by_name(cls, name):
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
+
