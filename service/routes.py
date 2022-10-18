@@ -18,9 +18,14 @@ from . import app
 ######################################################################
 @app.route("/")
 def index():
-    """ Root URL response """
+    """Root URL response"""
+    app.logger.info("Request for Root URL")
     return (
-        "Reminder: return some useful information in json format about the service here",
+        jsonify(
+            name="Order Demo REST API Service",
+            version="1.0",
+            paths=url_for("list_orders", _external=True),
+        ),
         status.HTTP_200_OK,
     )
 
@@ -60,7 +65,7 @@ def get_orders(order_id):
 ######################################################################
 # ADD A NEW ORDER
 ######################################################################
-@app.route("/order", methods=["POST"])
+@app.route("/orders", methods=["POST"])
 def create_orders():
     """
     Add a new order
