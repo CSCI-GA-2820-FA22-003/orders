@@ -19,6 +19,12 @@ class DataValidationError(Exception):
 
 
 class Item(db.Model):
+    """
+    Class that represents a Item belongs to an order with a specific product
+
+    This version uses a relational database for persistence which is hidden
+    from us by SQLAlchemy's object relational mappings (ORM)
+    """
     app = None
 
     # Schema
@@ -34,7 +40,7 @@ class Item(db.Model):
     #         Since it is redundant with serialize method
 
     def __repr__(self):
-        return "<Item id=[%s]\t product_id=[%s]\t cost=[%s]\t quantity=[%s]\t order_id=[%s]\t status=[%s]>" % (self.id, self.product_id, self.cost, self.quantity, self.order_id, self.status)
+        return f"<Item id=[{self.id}]\t product_id=[{self.product_id}]\t price=[{self.price}]\t quantity=[{self.quantity}]\t order_id=[{self.order_id}]\t status=[{self.status}]>"
 
     def create(self):
         """
@@ -77,12 +83,12 @@ class Item(db.Model):
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Item: missing " + error.args[0]
-            )
+            ) from error
         except TypeError as error:
             raise DataValidationError(
                 "Invalid Item: body of request contained bad or no data - "
                 "Error message: " + error
-            )
+            ) from error
 
         return self
 
@@ -120,34 +126,53 @@ class Item(db.Model):
 
 
 class Order(db.Model):
+    '''
+    Class that represent an order contains multiple Items.
+
+    This version uses a relational database for persistence which is hidden
+    from us by SQLAlchemy's object relational mappings (ORM)
+    '''
 
     app = None
 
     # Order Table Schema
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63))
+    # user_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(63), default="Invalid Address")
     date_created = db.Column(db.Date(), nullable=False, default=date.today())
 
     def __repr__(self):
-        return "<Order id=[%s]\t name=[%s]\t address=[%s]\t date_created=[%s]\t items=[%s]>" % (self.id, self.name, self.address, self.date_created, self.items)
+        return f"<Order id=[{self.id}]\t name=[{self.name}]\t address=[{self.address}]\t date_created=[{self.date_created}]]>"
 
     def create(self):
+        """
+        create an Order to database
+        """
         logger.info("Creating %s", self.name)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
     def update(self):
+        """
+        update an Order to database
+        """
         logger.info("Saving %s", self.name)
         db.session.commit()
 
     def delete(self):
+        """
+        Removes an Order from the data store
+        """
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self):
+        """
+        Serializes an Order into a dictionary
+        """
         order = {
             "id": self.id,
             "name": self.name,
@@ -157,6 +182,11 @@ class Order(db.Model):
         return order
 
     def deserialize(self, data):
+        """
+        Deserializes a Order from a dictionary
+        Args:
+            data (dict): A dictionary containing the Order data
+        """
         try:
             self.name = data["name"]
             self.address = data["address"]
@@ -174,28 +204,53 @@ class Order(db.Model):
                 "Invalid order: body of request contained "
                 "bad or no data - " + error.args[0]
             ) from error
-        return self 
+        return self
 
     @classmethod
     def init_db(cls, app):
+        """Initializes the database session
+
+        :param app: the Flask app
+        :type data: Flask
+
+        """
         logger.info("Initializing database")
         cls.app = app
         db.init_app(app)
         app.app_context().push()
-        db.create_all()  
+        db.create_all()
 
     @classmethod
     def all(cls):
-        logger.info("Processing all YourResourceModels")
+        """
+        Returns all of the Orders in the database
+        """
+        logger.info("Processing all orders")
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id):
+        """Finds a Order by it's ID
+
+        :param order_id: the id of the Order to find
+        :type order_id: int
+
+        :return: an instance with the order_id, or None if not found
+        :rtype: Pet
+        """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
     @classmethod
     def find_by_name(cls, name):
+        """Returns all Orders with the given name
+
+        :param name: the name of the Pets you want to match
+        :type name: str
+
+        :return: a collection of Orders with that name
+        :rtype: list
+
+        """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
-
