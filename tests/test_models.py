@@ -18,7 +18,7 @@ DATABASE_URI = os.getenv(
 #  O r d e r   M O D E L   T E S T   C A S E S
 ######################################################################
 class TestOrderModel(unittest.TestCase):
-    """ Test Cases for YourResourceModel Model """
+    """ Test Cases for Order Model """
 
     @classmethod
     def setUpClass(cls):
@@ -82,13 +82,96 @@ class TestOrderModel(unittest.TestCase):
         self.assertEqual(found_order.id, order.id)
         self.assertEqual(found_order.name, order.name)
         self.assertEqual(found_order.address, order.address)
+    
+    def test_update_a_order(self):
+        """It should Update a Order"""
+        order = OrderFactory()
+        logging.debug(order)
+        order.id = None
+        order.create()
+        logging.debug(order)
+        self.assertIsNotNone(order.id)
+        # Change it an save it
+        order.address = "Tandon Brooklyn downtown"
+        original_id = order.id
+        order.update()
+        self.assertEqual(order.id, original_id)
+        self.assertEqual(order.address, "Tandon Brooklyn downtown")
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        orders = Order.all()
+        self.assertEqual(len(orders), 1)
+        self.assertEqual(orders[0].id, original_id)
+        self.assertEqual(order.address, "Tandon Brooklyn downtown")
+
+    def test_delete_a_order(self):
+        """It should Delete a order"""
+        order = OrderFactory()
+        order.create()
+        self.assertEqual(len(Order.all()), 1)
+        # delete the order and make sure it isn't in the database
+        order.delete()
+        self.assertEqual(len(Order.all()), 0)
+
+    def test_list_all_orders(self):
+        """It should List all orders in the database"""
+        orders = Order.all()
+        self.assertEqual(orders, [])
+        # Create 5 orders
+        for _ in range(5):
+            order = OrderFactory()
+            order.create()
+        # See if we get back 5 orders
+        orders = order.all()
+        self.assertEqual(len(orders), 5)
+    
+    def test_serialize_a_order(self):
+        """It should serialize a order"""
+        order = OrderFactory()
+        data = order.serialize()
+        self.assertNotEqual(data, None)
+        self.assertIn("id", data)
+        self.assertEqual(data["id"], order.id)
+        self.assertIn("name", data)
+        self.assertEqual(data["name"], order.name)
+        self.assertIn("address", data)
+        self.assertEqual(data["address"], order.address)
+        self.assertIn("date_created", data)
+        self.assertEqual(date.fromisoformat(data["date_created"]), order.date_created)
+    
+    def test_deserialize_a_order(self):
+        """It should de-serialize a order"""
+        data = OrderFactory().serialize()
+        order = Order()
+        order.deserialize(data)
+        self.assertNotEqual(order, None)
+        self.assertEqual(order.id, None)
+        self.assertEqual(order.name, data["name"])
+        self.assertEqual(order.address, data["address"])
+        self.assertEqual(order.date_created, date.fromisoformat(data["date_created"]))
+
+    def test_find_order(self):
+        """It should Find a order by ID"""
+        orders = OrderFactory.create_batch(5)
+        for order in orders:
+            order.create()
+        logging.debug(orders)
+        # make sure they got saved
+        self.assertEqual(len(Order.all()), 5)
+        # find the 2nd order in the list
+        order = Order.find(orders[1].id)
+        self.assertIsNot(order, None)
+        self.assertEqual(order.id, orders[1].id)
+        self.assertEqual(order.name, orders[1].name)
+        self.assertEqual(order.address, orders[1].address)
+        self.assertEqual(order.date_created, orders[1].date_created)
 
 
 ######################################################################
 #  I T E M   M O D E L   T E S T   C A S E S
 ######################################################################
 class TestItemModel(unittest.TestCase):
-    """ Test Cases for YourResourceModel Model """
+    """ Test Cases for Item Model """
 
     @classmethod
     def setUpClass(cls):

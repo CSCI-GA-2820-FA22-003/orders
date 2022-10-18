@@ -245,7 +245,7 @@ class Order(db.Model):
     def find_by_name(cls, name):
         """Returns all Orders with the given name
 
-        :param name: the name of the Pets you want to match
+        :param name: the name of the Orders you want to match
         :type name: str
 
         :return: a collection of Orders with that name
