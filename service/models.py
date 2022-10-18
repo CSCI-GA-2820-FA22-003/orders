@@ -193,10 +193,10 @@ class Order(db.Model):
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
             order_list = data.get("items")
-            for json_item in order_list:
-                item = Item() #Item db-model
-                item.deserialize(json_item)
-                self.items.append(item)
+            # for json_item in order_list:
+            #     item = Item() #Item db-model
+            #     item.deserialize(json_item)
+            #     self.items.append(item)
         except KeyError as error:
             raise DataValidationError("Invalid order: missing " + error.args[0]) from error
         except TypeError as error:

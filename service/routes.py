@@ -49,7 +49,7 @@ def get_orders(order_id):
     This endpoint will return an Order based on it's id
     """
     app.logger.info("Request for order with id: %s", order_id)
-    order = Item.find(order_id)
+    order = Order.find(order_id)
     if not order:
         abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
 
@@ -74,7 +74,7 @@ def create_orders():
     message = order.serialize()
     location_url = url_for("get_orders", order_id=order.id, _external=True)
 
-    app.logger.info("Item with ID [%s] created.", order.id)
+    app.logger.info("Order with ID [%s] created.", order.id)
 
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
