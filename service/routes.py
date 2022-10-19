@@ -161,6 +161,34 @@ def delete_items(order_id, item_id):
     return "", status.HTTP_204_NO_CONTENT
 
 ######################################################################
+# ADD A NEW ITEM
+######################################################################
+@app.route("/orders/{id}/items", methods=["POST"])
+def create_items():
+    """
+    Add a new item
+    This endpoint will create an items based the data in the body that is posted
+    """
+    app.logger.info("Request to create an item for order")
+    check_content_type("application/json")
+    
+    order = Order.find(id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{id}' was not found.")
+
+    data = request.get_json()
+
+    app.logger.debug("Payload = %s", data)
+    item = Item()
+    item.deserialize(data) 
+    item.order_id = id
+    item.create()
+
+    app.logger.info("Item for order ID [%s] created.", id)
+
+    return item.serialize(), status.HTTP_201_CREATED
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
