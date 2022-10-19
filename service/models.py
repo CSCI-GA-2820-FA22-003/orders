@@ -28,19 +28,20 @@ class Item(db.Model):
     app = None
 
     # Schema
-    id = db.Column(db.Integer, primary_key = True)
-    product_id = db.Column(db.Integer, nullable = False)
-    price = db.Column(db.Float, nullable = False)
-    quantity = db.Column(db.Integer, nullable = False, default = 1)
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
-    status = db.Column(db.String, nullable = False)
+    status = db.Column(db.String, nullable=False)
 
     # Remark: Remove constructor according to consistent implementation with:
     #         https://github.com/nyu-devops/lab-flask-tdd/blob/master/service/models.py
     #         Since it is redundant with serialize method
 
     def __repr__(self):
-        return f"<Item id=[{self.id}]\t product_id=[{self.product_id}]\t price=[{self.price}]\t quantity=[{self.quantity}]\t order_id=[{self.order_id}]\t status=[{self.status}]>"
+        return f"<Item id=[{self.id}]\t product_id=[{self.product_id}]\t \
+            price=[{self.price}]\t quantity=[{self.quantity}]\t order_id=[{self.order_id}]\t status=[{self.status}]>"
 
     def create(self):
         """
@@ -66,7 +67,10 @@ class Item(db.Model):
 
     def serialize(self):
         """ Serializes a Item into a dictionary """
-        return {"id": self.id, "product_id": self.product_id, "price": self.price, 'quantity': self.quantity, 'order_id': self.order_id}
+        return {
+            "id": self.id, "product_id": self.product_id, "price": self.price,
+            'quantity': self.quantity, 'order_id': self.order_id
+            }
 
     def deserialize(self, data):
         """
@@ -192,7 +196,8 @@ class Order(db.Model):
             self.address = data["address"]
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
-            order_list = data.get("items")
+            # [++Yintao, Xu] Currently disabled due to weird bugs
+            # order_list = data.get("items")
             # for json_item in order_list:
             #     item = Item() #Item db-model
             #     item.deserialize(json_item)
