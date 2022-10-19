@@ -5,9 +5,9 @@ Describe what your service does here
 """
 
 from flask import Flask, jsonify, request, url_for, make_response, abort
-from .common import status  # HTTP Status Codes
 from service.models import Item
 from service.models import Order
+from .common import status  # HTTP Status Codes
 
 # Import Flask application
 from . import app
@@ -123,6 +123,26 @@ def delete_orders(order_id):
     app.logger.info("Pet with ID [%s] delete complete.", order_id)
     return "", status.HTTP_204_NO_CONTENT
 
+
+######################################################################
+# DELETE AN ITEM
+######################################################################
+@app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["DELETE"])
+def delete_items(order_id, item_id):
+    """
+    Delete an Item
+    This endpoint will delete an item based on its order_id & item_id
+    """
+    app.logger.info("Request to delete item with order_id [%s] and item_id [%s]", order_id, item_id)
+
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND,
+                f"Order with id '{order_id}' was not found.")
+    item = Item.find(item_id)
+    if item:
+        item.delete()
+    return "", status.HTTP_204_NO_CONTENT
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
