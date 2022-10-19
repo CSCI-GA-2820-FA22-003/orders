@@ -123,6 +123,22 @@ def delete_orders(order_id):
     app.logger.info("Pet with ID [%s] delete complete.", order_id)
     return "", status.HTTP_204_NO_CONTENT
 
+######################################################################
+# LIST ITEM DETAILS
+######################################################################
+@app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["GET"])
+def list_item(order_id,item_id):
+    """Returns particular item of the Order based on its id"""
+    app.logger.info("Request for item with id [%s]", item_id)
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND,f"Order with id '{order_id}' was not found.")
+    item = Item.find(item_id)
+    if not item:
+        abort(status.HTTP_404_NOT_FOUND,f"Item with id '{item_id}' was not found.")
+    
+    app.logger.info("Get item details successful")
+    return item.serialize(), status.HTTP_200_OK
 
 ######################################################################
 # DELETE AN ITEM
