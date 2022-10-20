@@ -192,6 +192,7 @@ def create_items():
     app.logger.info("Item for order ID [%s] created.", id)
 
     return item.serialize(), status.HTTP_201_CREATED
+    
 
 ######################################################################
 # UPDATE AN ITEM

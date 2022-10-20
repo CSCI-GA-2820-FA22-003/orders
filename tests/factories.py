@@ -19,7 +19,7 @@ from datetime import date
 
 import factory
 from factory.fuzzy import FuzzyDate
-from service.models import Order
+from service.models import Order, Item
 
 
 class OrderFactory(factory.Factory):
@@ -34,3 +34,19 @@ class OrderFactory(factory.Factory):
     name = factory.Faker("first_name")
     address = factory.Faker("address")
     date_created = FuzzyDate(date(2008, 1, 1))
+
+
+class ItemFactory(factory.Factory):
+    """Creates fake Items for orders"""
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        """Maps factory to data model"""
+        model = Item
+
+    id = factory.Sequence(lambda n: n)
+    product_id = factory.Faker("111")
+    price = factory.Faker("12.55")
+    quantity = factory.Faker("1")
+    order_id = None
+    status = factory.Faker("active")
+    order = factory.SubFactory(OrderFactory)
