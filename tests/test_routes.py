@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 from service import app
 from service.models import Order, Item, db
 from service.common import status  # HTTP Status Codes
-from tests.factories import OrderFactory
+from tests.factories import OrderFactory, ItemFactory
 from datetime import date
 
 DATABASE_URI = os.getenv(
@@ -164,4 +164,116 @@ class TestOrderServer(TestCase):
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_add_item(self):
+        """It should Add an item to an order"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.get_json()
+        logging.debug(data)
+        self.assertEqual(data["product_id"], test_order.product_id)
+        self.assertEqual(data["price"], test_order.price)
+        self.assertEqual(data["quantity"], test_order.quantity)
+        self.assertEqual(data["status"], test_order.status)
+
+    def test_get_item(self):
+        """It should Get an item from an order"""
+        # create an item
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+
+        # fetch it back
+        response = self.client.get(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        logging.debug(data)
+        self.assertEqual(data["product_id"], test_order.product_id)
+        self.assertEqual(data["price"], test_order.price)
+        self.assertEqual(data["quantity"], test_order.quantity)
+        self.assertEqual(data["status"], test_order.status)
+
+    def test_update_item(self):
+        """It should Update an item in an order"""
+        # create an item
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["price"] = "3.75"
+
+        # send the update back
+        response = self.client.put(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # retrieve it back
+        response = self.client.get(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        logging.debug(data)
+        self.assertEqual(data["id"], item_id)
+        self.assertEqual(data["price"], "3.75")
+
+    def test_delete_item(self):
+        """It should Delete an item"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+
+        # send delete request
+        response = self.client.delete(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # retrieve it back and make sure item is not there
+        response = self.client.get(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

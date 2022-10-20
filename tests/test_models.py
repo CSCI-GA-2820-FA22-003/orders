@@ -8,7 +8,7 @@ import unittest
 from service.models import Order, Item, db
 from service import app
 from datetime import date
-from tests.factories import OrderFactory
+from tests.factories import OrderFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -200,7 +200,77 @@ class TestItemModel(unittest.TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
-    def test_XXXX(self):
-        """ It should always be true """
-        self.assertTrue(True)
-        
+    def test_add_order_item(self):
+            """It should Create an order with an item and add it to the database"""
+            orders = Order.all()
+            self.assertEqual(orders, [])
+            order = OrderFactory()
+            item = ItemFactory(order=order)
+            order.items.append(item)
+            order.create()
+            # Assert that it was assigned an id and shows up in the database
+            self.assertIsNotNone(order.id)
+            orders = Order.all()
+            self.assertEqual(len(orders), 1)
+
+            new_order = Order.find(order.id)
+            self.assertEqual(new_order.items[0].product_id, item.product_id)
+
+            item2 = ItemFactory(order=order)
+            order.items.append(item2)
+            order.update()
+
+            new_order = Order.find(order.id)
+            self.assertEqual(len(new_order.items), 2)
+            self.assertEqual(new_order.items[1].product_id, item2.product_id)
+
+    def test_update_order_item(self):
+            """It should Update an order's item"""
+            orders = Order.all()
+            self.assertEqual(orders, [])
+
+            order = OrderFactory()
+            item = ItemFactory(order=order)
+            order.create()
+            # Assert that it was assigned an id and shows up in the database
+            self.assertIsNotNone(order.id)
+            orders = Order.all()
+            self.assertEqual(len(orders), 1)
+
+            # Fetch it back
+            order = Order.find(order.id)
+            i = order.items[0]
+            print("%r", i)
+            self.assertEqual(i.price, item.price)
+            # Change the price
+            i.price = "10.75"
+            order.update()
+
+            # Fetch it back again
+            order = Order.find(order.id)
+            item = order.items[0]
+            self.assertEqual(item.price, "10.75")
+
+    def test_delete_order_item(self):
+            """It should Delete an order's item"""
+            orders = Order.all()
+            self.assertEqual(orders, [])
+
+            order = OrderFactory()
+            item = ItemFactory(order=order)
+            order.create()
+            # Assert that it was assigned an id and shows up in the database
+            self.assertIsNotNone(order.id)
+            orders = Order.all()
+            self.assertEqual(len(orders), 1)
+
+            # Fetch it back
+            order = Order.find(order.id)
+            item = order.items[0]
+            item.delete()
+            order.update()
+
+            # Fetch it back again
+            order = Order.find(order.id)
+            self.assertEqual(len(order.items), 0)
+            
