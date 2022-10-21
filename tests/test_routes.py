@@ -33,6 +33,7 @@ class TestOrderServer(TestCase):
         # Set up the test database
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
+        db.drop_all()
         Order.init_db(app)
 
     @classmethod

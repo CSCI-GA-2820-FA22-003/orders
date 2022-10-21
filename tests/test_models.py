@@ -27,6 +27,7 @@ class TestOrderModel(unittest.TestCase):
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
+        db.drop_all()
         Order.init_db(app)
 
     @classmethod
@@ -180,7 +181,9 @@ class TestItemModel(unittest.TestCase):
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
+        db.drop_all()
         Order.init_db(app)
+        Item.init_db(app)
 
     @classmethod
     def tearDownClass(cls):
@@ -201,76 +204,68 @@ class TestItemModel(unittest.TestCase):
     ######################################################################
 
     def test_add_order_item(self):
-            """It should Create an order with an item and add it to the database"""
-            orders = Order.all()
-            self.assertEqual(orders, [])
-            order = OrderFactory()
-            item = ItemFactory(order=order)
-            order.items.append(item)
-            order.create()
-            # Assert that it was assigned an id and shows up in the database
-            self.assertIsNotNone(order.id)
-            orders = Order.all()
-            self.assertEqual(len(orders), 1)
+        """It should Create an order with an item and add it to the database"""
+        # Make new order & item, bind item to the order
+        order = OrderFactory()
+        order.create()
 
-            new_order = Order.find(order.id)
-            self.assertEqual(new_order.items[0].product_id, item.product_id)
+        item = ItemFactory(order_id=order.id)
+        item.create()
 
-            item2 = ItemFactory(order=order)
-            order.items.append(item2)
-            order.update()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(order.id)
+        orders = Order.all()
+        self.assertEqual(len(orders), 1)
 
-            new_order = Order.find(order.id)
-            self.assertEqual(len(new_order.items), 2)
-            self.assertEqual(new_order.items[1].product_id, item2.product_id)
+        # Retrieve the item from order
+        item_retrieve = Item.find_by_order_id(order.id)
+        self.assertEqual(item_retrieve.count(), 1)
 
     def test_update_order_item(self):
-            """It should Update an order's item"""
-            orders = Order.all()
-            self.assertEqual(orders, [])
+        """It should Update an order's item"""
+        len_orders_old = len(Order.all())
 
-            order = OrderFactory()
-            item = ItemFactory(order=order)
-            order.create()
-            # Assert that it was assigned an id and shows up in the database
-            self.assertIsNotNone(order.id)
-            orders = Order.all()
-            self.assertEqual(len(orders), 1)
+        order = OrderFactory()
+        order.create()
 
-            # Fetch it back
-            order = Order.find(order.id)
-            i = order.items[0]
-            print("%r", i)
-            self.assertEqual(i.price, item.price)
-            # Change the price
-            i.price = "10.75"
-            order.update()
+        item = ItemFactory(order_id=order.id)
+        item.create()
 
-            # Fetch it back again
-            order = Order.find(order.id)
-            item = order.items[0]
-            self.assertEqual(item.price, "10.75")
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(order.id)
+        orders = Order.all()
+        self.assertEqual(len(orders) - len_orders_old, 1)
+
+        # Fetch it back
+        i = list(Item.find_by_order_id(order.id))[0]
+        print("%r", i)
+        self.assertEqual(i.price, item.price)
+        # Change the price
+        i.price = "10.75"
+        order.update()
+
+        # Fetch it back again
+        i = list(Item.find_by_order_id(order.id))[0]
+        self.assertEqual(i.price, 10.75)
 
     def test_delete_order_item(self):
-            """It should Delete an order's item"""
-            orders = Order.all()
-            self.assertEqual(orders, [])
+        """It should Delete an order's item"""
+        len_orders_old = len(Order.all())
 
-            order = OrderFactory()
-            item = ItemFactory(order=order)
-            order.create()
-            # Assert that it was assigned an id and shows up in the database
-            self.assertIsNotNone(order.id)
-            orders = Order.all()
-            self.assertEqual(len(orders), 1)
+        order = OrderFactory()
+        order.create()
+        item = ItemFactory(order_id=order.id)
+        item.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(order.id)
+        orders = Order.all()
+        self.assertEqual(len(orders) - len_orders_old, 1)
 
-            # Fetch it back
-            order = Order.find(order.id)
-            item = order.items[0]
-            item.delete()
-            order.update()
+        # Fetch it back
+        item = list(Item.find_by_order_id(order.id))[0]
+        item.delete()
 
-            # Fetch it back again
-            order = Order.find(order.id)
-            self.assertEqual(len(order.items), 0)
+        # Check whether has been deleted
+        items = Item.find_by_order_id(order.id)
+        self.assertEqual(items.count(), 0)
             

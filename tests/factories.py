@@ -20,6 +20,7 @@ from datetime import date
 import factory
 from factory.fuzzy import FuzzyDate
 from service.models import Order, Item
+import random
 
 
 class OrderFactory(factory.Factory):
@@ -44,9 +45,9 @@ class ItemFactory(factory.Factory):
         model = Item
 
     id = factory.Sequence(lambda n: n)
-    product_id = factory.Faker("111")
-    price = factory.Faker("12.55")
-    quantity = factory.Faker("1")
-    order_id = None
-    status = factory.Faker("active")
-    order = factory.SubFactory(OrderFactory)
+    product_id = random.randint(1, 20000)
+    price = random.random() * 10 + 10
+    quantity = random.randint(1, 20)
+    order_id = random.randint(1, 20)
+    status = "active"
+    # order = factory.SubFactory(OrderFactory)

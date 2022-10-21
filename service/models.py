@@ -47,7 +47,7 @@ class Item(db.Model):
         """
         Creates an Item to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating %d", self.id)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
@@ -118,15 +118,25 @@ class Item(db.Model):
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
-    # @classmethod
-    # def find_by_name(cls, name):
-    #     """Returns all Item with the given name
+    @classmethod
+    def find_by_product_id(cls, product_id):
+        """Returns all Item with the given order_id
 
-    #     Args:
-    #         name (string): the name of the Item you want to match
-    #     """
-    #     logger.info("Processing name query for %s ...", name)
-    #     return cls.query.filter(cls.name == name)
+        Args:
+            name (string): the name of the Item you want to match
+        """
+        logger.info("Processing name query for %s ...", product_id)
+        return cls.query.filter(cls.product_id == product_id)
+
+    @classmethod
+    def find_by_order_id(cls, order_id):
+        """Returns all Item with the given order_id
+
+        Args:
+            name (string): the name of the Item you want to match
+        """
+        logger.info("Processing name query for %s ...", order_id)
+        return cls.query.filter(cls.order_id == order_id)
 
 
 class Order(db.Model):
