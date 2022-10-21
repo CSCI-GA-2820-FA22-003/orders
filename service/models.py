@@ -69,29 +69,26 @@ class Item(db.Model):
         """ Serializes a Item into a dictionary """
         return {
             "id": self.id, "product_id": self.product_id, "price": self.price,
-            'quantity': self.quantity, 'order_id': self.order_id
+            "quantity": self.quantity, "order_id": self.order_id, "status": self.status
             }
 
     def deserialize(self, data):
         """
-        Deserializes a YourResourceModel from a dictionary
+        Deserializes a Item from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
             self.id = data["id"]
-            self.product_id = data['product_id']
-            self.price = data['price']
-            self.quantity = data['quantity']
+            self.product_id = data["product_id"]
+            self.price = data["price"]
+            self.quantity = data["quantity"]
+            self.order_id = data["order_id"]
+            self.status = data["status"]
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Item: missing " + error.args[0]
-            ) from error
-        except TypeError as error:
-            raise DataValidationError(
-                "Invalid Item: body of request contained bad or no data - "
-                "Error message: " + error
             ) from error
 
         return self
@@ -231,6 +228,7 @@ class Order(db.Model):
         """
         logger.info("Initializing database")
         cls.app = app
+        Item.app = app
         db.init_app(app)
         app.app_context().push()
         db.create_all()

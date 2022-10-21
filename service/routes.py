@@ -168,8 +168,8 @@ def delete_items(order_id, item_id):
 ######################################################################
 # ADD A NEW ITEM
 ######################################################################
-@app.route("/orders/{id}/items", methods=["POST"])
-def create_items():
+@app.route("/orders/<int:order_id>/items", methods=["POST"])
+def create_items(order_id):
     """
     Add a new item
     This endpoint will create an items based the data in the body that is posted
@@ -177,7 +177,7 @@ def create_items():
     app.logger.info("Request to create an item for order")
     check_content_type("application/json")
 
-    order = Order.find(id)
+    order = Order.find(order_id)
     if not order:
         abort(status.HTTP_404_NOT_FOUND, f"Order with id '{id}' was not found.")
 
@@ -186,7 +186,7 @@ def create_items():
     app.logger.debug("Payload = %s", data)
     item = Item()
     item.deserialize(data)
-    item.order_id = id
+    item.order_id = order_id
     item.create()
 
     app.logger.info("Item for order ID [%s] created.", id)
@@ -217,8 +217,8 @@ def update_item(order_id, item_id):
         )
 
     # Update from the json in the body of the request
-    Item.deserialize(request.get_json())
-    Item.id = item_id
+    item.deserialize(request.get_json())
+    item.id = item_id
     item.update()
 
     return jsonify(item.serialize()), status.HTTP_200_OK
