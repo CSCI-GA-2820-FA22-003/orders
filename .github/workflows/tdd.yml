@@ -50,5 +50,3 @@ jobs:
       
       - name: CodeCov
         uses: codecov/codecov-action@v2
-        with:
-          version: "v0.1.13"  
