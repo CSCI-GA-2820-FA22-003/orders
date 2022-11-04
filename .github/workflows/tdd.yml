@@ -36,6 +36,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y gcc libpq-dev
+          apt-get install -y curl
             
       - name: Install dependencies
         run: |
