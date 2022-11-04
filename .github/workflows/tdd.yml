@@ -48,5 +48,7 @@ jobs:
         env:
           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/postgres"
       
-      - name: Codecov
-        run: curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov
+      - name: CodeCov
+        uses: codecov/codecov-action@v2
+        with:
+          version: "v0.1.13"  
