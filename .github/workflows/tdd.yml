@@ -1,4 +1,4 @@
-name: Codecov coverage
+name: TestCasesTDD
 on:
   push:
     branches:    
@@ -47,6 +47,3 @@ jobs:
         run: nosetests
         env:
           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/postgres"
-      
-      - name: CodeCov
-        uses: codecov/codecov-action@v2
