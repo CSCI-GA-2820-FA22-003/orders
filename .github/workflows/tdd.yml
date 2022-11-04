@@ -1,5 +1,8 @@
 name: Codecov coverage
 on:
+  push:
+    branches:    
+      - '*'
   pull_request:
     branches:
       - main
