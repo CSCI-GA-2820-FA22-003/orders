@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
-[![Pylint](https://github.com/NYU-Devops-2022-Order/orders/actions/workflows/pylint.yml/badge.svg)](https://github.com/NYU-Devops-2022-Order/orders/actions/workflows/pylint.yml)
+[![Pylint](https://github.com/CSCI-GA-2820-FA22-003/orders/actions/workflows/pylint.yml/badge.svg)](https://github.com/CSCI-GA-2820-FA22-003/orders/actions/workflows/pylint.yml)
 
 ## Overview
 
