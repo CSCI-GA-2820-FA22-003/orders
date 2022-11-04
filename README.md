@@ -36,8 +36,7 @@ A collection of order items created from products and quantity. Logo made by [No
 | Description                       | Endpoint                      | Issue |
 | --------------------------------- | ----------------------------- | ----- |
 | Read order based on price range   | POST `/orders/advanced/price` | TBD      |
-| Read order based on item quantity | POST `/orders/advanced/num    | TBD      |
-| Read orders of a target customer  | GET `/orders/{custom_id}`     | TBD     |
+| Read order based on item quantity | POST `/orders/advanced/num`    | TBD      |
 
 ## License
 
