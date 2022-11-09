@@ -119,11 +119,17 @@ def delete_orders(order_id):
     This endpoint will delete an Order based the id specified in the path
     """
     app.logger.info("Request to delete pet with id: %s", order_id)
-    pet = Order.find(order_id)
-    if pet:
-        pet.delete()
+    order_obj = Order.find(order_id)
 
-    app.logger.info("Pet with ID [%s] delete complete.", order_id)
+    items_retrieve = Item.find_by_order_id(order_id)
+    if items_retrieve:
+        items_retrieve.delete()
+
+    if order_obj:
+        order_obj.delete()
+
+
+    app.logger.info("Order with ID [%s] delete complete.", order_id)
     return "", status.HTTP_204_NO_CONTENT
 
 
@@ -137,6 +143,7 @@ def list_item(order_id, item_id):
     order = Order.find(order_id)
     if not order:
         abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+    app.logger.info(item_id)
     item = Item.find(item_id)
     if not item:
         abort(status.HTTP_404_NOT_FOUND, f"Item with id '{item_id}' was not found.")
