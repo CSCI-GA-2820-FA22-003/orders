@@ -128,7 +128,6 @@ def delete_orders(order_id):
     if order_obj:
         order_obj.delete()
 
-
     app.logger.info("Order with ID [%s] delete complete.", order_id)
     return "", status.HTTP_204_NO_CONTENT
 
