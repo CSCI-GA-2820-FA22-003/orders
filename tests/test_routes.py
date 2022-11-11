@@ -168,6 +168,20 @@ class TestRestApiServer(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_delete_order_not_found(self):
+        """It should not delete an order thats not found"""
+        # create a order
+        test_order = OrderFactory()
+        response = self.client.post(BASE_URL, json=test_order.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # try to delete order
+        response = self.client.delete(f"{BASE_URL}/1000")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("Order with id '1000' was not found.", data["message"])
+
     def test_add_item(self):
         """It should Add an item to an order"""
         test_order = self._create_orders(1)[0]
@@ -274,6 +288,29 @@ class TestRestApiServer(TestCase):
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["price"], 3.75)
 
+    def test_update_item_with_order_not_exist(self):
+        """It should not update item if order not exists"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"/orders/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["price"] = 3.75
+
+        # try to update
+        response = self.client.put(
+            f"{BASE_URL}/4533/items/{item_id}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_delete_item(self):
         """It should Delete an item"""
         test_order = self._create_orders(1)[0]
@@ -300,6 +337,43 @@ class TestRestApiServer(TestCase):
             f"{BASE_URL}/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order_with_item(self):
+        """It should Delete Order and its items"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+
+        # delete item
+        response = self.client.delete(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # check item is not there
+        response = self.client.get(
+            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        #delete order
+        response = self.client.delete(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response.data), 0)
+
+        # check they are deleted
+        response = self.client.get(f"{BASE_URL}/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_item_with_order_not_exist(self):
@@ -341,3 +415,12 @@ class TestRestApiServer(TestCase):
             f"/orders/{test_order.id}/items",
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_method_not_allowed(self):
+        """It should not allow an illegal method call"""
+        test_order = self._create_orders(1)[0]
+        response = self.client.get(
+            f"/orders/{test_order.id}/items",
+            json={"method": "invalid"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
