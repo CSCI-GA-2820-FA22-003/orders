@@ -169,7 +169,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_order_not_found(self):
-        """It should not delete a order thats not found"""
+        """It should not delete an order thats not found"""
         # create a order
         test_order = OrderFactory()
         response = self.client.post(BASE_URL, json=test_order.serialize())
@@ -180,7 +180,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
-        self.assertIn("Order with id '1000' not found.", data["message"])
+        self.assertIn("Order with id '1000' was not found.", data["message"])
 
     def test_add_item(self):
         """It should Add an item to an order"""
@@ -305,7 +305,7 @@ class TestRestApiServer(TestCase):
 
         # try to update
         response = self.client.put(
-            f"{BASE_URL}/1000/items/{item_id}",
+            f"{BASE_URL}/4533/items/{item_id}",
             json=data,
             content_type="application/json",
         )
@@ -419,8 +419,8 @@ class TestRestApiServer(TestCase):
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
         test_order = self._create_orders(1)[0]
-        response = self.client.post(
+        response = self.client.get(
             f"/orders/{test_order.id}/items",
-            json={"method"},
+            json={"method": "invalid"},
         )
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

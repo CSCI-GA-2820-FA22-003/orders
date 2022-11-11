@@ -121,6 +121,9 @@ def delete_orders(order_id):
     app.logger.info("Request to delete pet with id: %s", order_id)
     order_obj = Order.find(order_id)
 
+    if not order_obj:
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+
     items_retrieve = Item.find_by_order_id(order_id)
     if items_retrieve:
         items_retrieve.delete()
@@ -185,7 +188,7 @@ def create_items(order_id):
 
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
 
     data = request.get_json()
 
@@ -213,6 +216,10 @@ def update_item(order_id, item_id):
         "Request to update Order %s for Item id: %s", (item_id, order_id)
     )
     check_content_type("application/json")
+
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
 
     # See if the item exists and abort if it doesn't
     item = Item.find(item_id)
