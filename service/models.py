@@ -153,9 +153,10 @@ class Order(db.Model):
     # user_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(63), default="Invalid Address")
     date_created = db.Column(db.Date(), nullable=False, default=date.today())
+    items = db.relationship("Item", backref="order", passive_deletes=True)
 
     def __repr__(self):
-        return f"<Order id=[{self.id}]\t name=[{self.name}]\t address=[{self.address}]\t date_created=[{self.date_created}]]>"
+        return f"<Order id=[{self.id}]\t name=[{self.name}]\t address=[{self.address}]\t date_created=[{self.date_created}]\t items=[]]>"
 
     def create(self):
         """
@@ -190,7 +191,10 @@ class Order(db.Model):
             "name": self.name,
             "address": self.address,
             "date_created": self.date_created.isoformat(),
+            "items": []
         }
+        for item in self.items:
+            order["items"].append(item.serialize())
         return order
 
     def deserialize(self, data):
@@ -204,12 +208,11 @@ class Order(db.Model):
             self.address = data["address"]
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
-            # [++Yintao, Xu] Currently disabled due to weird bugs
-            # order_list = data.get("items")
-            # for json_item in order_list:
-            #     item = Item() #Item db-model
-            #     item.deserialize(json_item)
-            #     self.items.append(item)
+            item_list = data.get("items")
+            for json_item in item_list:
+                item = Item()
+                item.deserialize(json_item)
+                self.items.append(item)
         except KeyError as error:
             raise DataValidationError("Invalid order: missing " + error.args[0]) from error
         except TypeError as error:

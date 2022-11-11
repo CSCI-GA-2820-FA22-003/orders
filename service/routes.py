@@ -155,6 +155,21 @@ def list_item(order_id, item_id):
 
 
 ######################################################################
+# LIST ITEMS
+######################################################################
+@app.route("/orders/<int:order_id>/items", methods=["GET"])
+def list_all_items(order_id):
+    """Returns all of the Items for an Order"""
+    app.logger.info("Request for all Items for Order with id: %s", order_id)
+    order = Order.find(order_id)
+    if not order:
+        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+
+    results = [item.serialize() for item in order.items]
+    return jsonify(results), status.HTTP_200_OK
+
+
+######################################################################
 # DELETE AN ITEM
 ######################################################################
 @app.route("/orders/<int:order_id>/items/<int:item_id>", methods=["DELETE"])
