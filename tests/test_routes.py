@@ -176,11 +176,11 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # try to delete order
-        response = self.client.delete(f"{BASE_URL}/{test_order.id}")
+        response = self.client.delete(f"{BASE_URL}/999")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
-        self.assertIn("Order not found.", data["message"])
+        self.assertIn("Order with id '999' not found.", data["message"])
 
     def test_add_item(self):
         """It should Add an item to an order"""
@@ -305,7 +305,7 @@ class TestRestApiServer(TestCase):
 
         # try to update
         response = self.client.put(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"{BASE_URL}/99/items/{item_id}",
             json=data,
             content_type="application/json",
         )
@@ -421,6 +421,6 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         response = self.client.post(
             f"/orders/{test_order.id}/items",
-            method_type="method",
+            json="method",
         )
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
