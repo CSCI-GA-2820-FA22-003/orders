@@ -201,7 +201,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(data["status"], item.status)
 
     def test_get_item(self):
-        """It should Get one item from an order"""
+        """It should Get an item from an order"""
         # create an item
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
@@ -229,7 +229,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(data["price"], item.price)
         self.assertEqual(data["quantity"], item.quantity)
         self.assertEqual(data["status"], item.status)
-    
+
     def test_get_item_list(self):
         """It should Get all Items of an Order"""
         test_order = self._create_orders(1)[0]
@@ -444,7 +444,7 @@ class TestRestApiServer(TestCase):
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
         test_order = self._create_orders(1)[0]
-        response = self.client.get(
+        response = self.client.delete(
             f"/orders/{test_order.id}/items",
             json={"method": "invalid"},
         )

@@ -70,7 +70,7 @@ class Item(db.Model):
         return {
             "id": self.id, "product_id": self.product_id, "price": self.price,
             "quantity": self.quantity, "order_id": self.order_id, "status": self.status
-            }
+        }
 
     def deserialize(self, data):
         """
@@ -208,13 +208,14 @@ class Order(db.Model):
             self.address = data["address"]
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
-            item_list = data.get("items")
+                item_list = data.get("items")
             for json_item in item_list:
                 item = Item()
                 item.deserialize(json_item)
                 self.items.append(item)
         except KeyError as error:
-            raise DataValidationError("Invalid order: missing " + error.args[0]) from error
+            raise DataValidationError(
+                "Invalid order: missing " + error.args[0]) from error
         except TypeError as error:
             raise DataValidationError(
                 "Invalid order: body of request contained "
