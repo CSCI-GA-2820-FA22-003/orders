@@ -230,6 +230,31 @@ class TestRestApiServer(TestCase):
         self.assertEqual(data["quantity"], item.quantity)
         self.assertEqual(data["status"], item.status)
 
+    def test_get_item_list(self):
+        """It should Get all Items of an Order"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"/orders/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            f"/orders/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # get the list back and make sure there are 2
+        resp = self.client.get(f"{BASE_URL}/{test_order.id}/items")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        data = resp.get_json()
+        self.assertEqual(len(data), 2)
+
     def test_get_item_with_order_not_exist(self):
         """It should not list item if order not exists"""
         test_order = self._create_orders(1)[0]
@@ -419,7 +444,7 @@ class TestRestApiServer(TestCase):
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
         test_order = self._create_orders(1)[0]
-        response = self.client.get(
+        response = self.client.delete(
             f"/orders/{test_order.id}/items",
             json={"method": "invalid"},
         )
