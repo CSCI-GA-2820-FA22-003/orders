@@ -156,7 +156,8 @@ class Order(db.Model):
     items = db.relationship("Item", backref="order", passive_deletes=True)
 
     def __repr__(self):
-        return f"<Order id=[{self.id}]\t name=[{self.name}]\t address=[{self.address}]\t date_created=[{self.date_created}]\t items=[]]>"
+        return f"<id=[{self.id}]\t name=[{self.name}]\t \
+            address=[{self.address}]\t date_created=[{self.quantdate_createdity}]\t items=[]>"
 
     def create(self):
         """
