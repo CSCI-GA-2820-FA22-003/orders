@@ -1,12 +1,7 @@
 """
 My Service
 
-The orders resource is a collection of order items where each item represents a 
-product id, its quantity, and its price. 
-We also implement a subordinate REST API to add order items to the order collection 
-(e.g., /orders/{id}/items) and associate the order with a customer preferably through 
-its customer id. A good action for the order API is to be able to cancel an order.
-
+Describe what your service does here
 """
 
 from flask import jsonify, request, url_for, abort
