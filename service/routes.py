@@ -4,13 +4,13 @@ My Service
 Describe what your service does here
 """
 
-from flask import jsonify, request, url_for, abort
-from service.models import Item
-from service.models import Order
-from .common import status  # HTTP Status Codes
+from flask import abort, jsonify, request, url_for
+
+from service.models import Item, Order
 
 # Import Flask application
 from . import app
+from .common import status  # HTTP Status Codes
 
 
 ######################################################################
@@ -57,7 +57,8 @@ def get_orders(order_id):
     app.logger.info("Request for order with id: %s", order_id)
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Item with id '{order_id}' was not found.")
 
     app.logger.info("Returning item: %s", order.name)
     return jsonify(order.serialize()), status.HTTP_200_OK
@@ -99,7 +100,8 @@ def update_orders(order_id):
 
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
 
     order.deserialize(request.get_json())
     order.id = order_id
@@ -122,7 +124,8 @@ def delete_orders(order_id):
     order_obj = Order.find(order_id)
 
     if not order_obj:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
 
     items_retrieve = Item.find_by_order_id(order_id)
     if items_retrieve:
@@ -144,11 +147,13 @@ def list_item(order_id, item_id):
     app.logger.info("Request for item with id [%s]", item_id)
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
     app.logger.info(item_id)
     item = Item.find(item_id)
     if not item:
-        abort(status.HTTP_404_NOT_FOUND, f"Item with id '{item_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Item with id '{item_id}' was not found.")
 
     app.logger.info("Get item details successful")
     return item.serialize(), status.HTTP_200_OK
@@ -163,7 +168,8 @@ def list_all_items(order_id):
     app.logger.info("Request for all Items for Order with id: %s", order_id)
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
 
     results = [item.serialize() for item in order.items]
     return jsonify(results), status.HTTP_200_OK
@@ -178,11 +184,13 @@ def delete_items(order_id, item_id):
     Delete an Item
     This endpoint will delete an item based on its order_id & item_id
     """
-    app.logger.info("Request to delete item with order_id [%s] and item_id [%s]", order_id, item_id)
+    app.logger.info(
+        "Request to delete item with order_id [%s] and item_id [%s]", order_id, item_id)
 
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
     item = Item.find(item_id)
     if item:
         item.delete()
@@ -203,7 +211,8 @@ def create_items(order_id):
 
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Order with id '{order_id}' was not found.")
 
     data = request.get_json()
 
@@ -234,7 +243,8 @@ def update_item(order_id, item_id):
 
     order = Order.find(order_id)
     if not order:
-        abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Item with id '{order_id}' was not found.")
 
     # See if the item exists and abort if it doesn't
     item = Item.find(item_id)
@@ -254,6 +264,8 @@ def update_item(order_id, item_id):
 ######################################################################
 # QUERY BASED ON DATE
 ######################################################################
+
+
 @app.route("/orders/date", methods=["GET"])
 def order_retrieve_based_on_date(date_iso):
     """
@@ -268,8 +280,9 @@ def order_retrieve_based_on_date(date_iso):
     order_list = Order.find_by_date(date_iso)
 
     if not order_list:
-        abort(status.HTTP_404_NOT_FOUND, f"No order was found for date '{date_iso}'")
-    
+        abort(status.HTTP_404_NOT_FOUND,
+              f"No order was found for date '{date_iso}'")
+
     return jsonify(order_list), status.HTTP_200_OK
 
 ######################################################################
@@ -296,7 +309,8 @@ def check_content_type(content_type):
     if request.headers["Content-Type"] == content_type:
         return
 
-    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    app.logger.error("Invalid Content-Type: %s",
+                     request.headers["Content-Type"])
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {content_type}",
