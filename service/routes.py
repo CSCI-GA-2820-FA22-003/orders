@@ -251,6 +251,26 @@ def update_item(order_id, item_id):
 
     return jsonify(item.serialize()), status.HTTP_200_OK
 
+######################################################################
+# QUERY BASED ON DATE
+######################################################################
+@app.route("/orders/date", methods=["GET"])
+def order_retrieve_based_on_date(date_iso):
+    """
+    Retrieve order lists based on date created
+    This endpoint will return a list of orders created on a specific date
+    """
+    app.logger.info(
+        "Request to retrieve Orders based on date %s", (date_iso)
+    )
+    check_content_type("application/json")
+
+    order_list = Order.find_by_date(date_iso)
+
+    if not order_list:
+        abort(status.HTTP_404_NOT_FOUND, f"No order was found for date '{date_iso}'")
+    
+    return jsonify(order_list), status.HTTP_200_OK
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
