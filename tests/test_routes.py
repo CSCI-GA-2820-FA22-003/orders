@@ -92,6 +92,22 @@ class TestRestApiServer(TestCase):
         data = response.get_json()
         self.assertEqual(data["name"], test_order.name)
 
+    def test_get_order_by_date(self):
+        """It should get a single order by date"""
+        # get the id of a order
+        test_order = self._create_orders(1)[0]
+        
+        response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], test_order.name)
+
+        response = self.client.get(f"{BASE_URL}/date/{test_order.date_created}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["name"], test_order.name)
+
     def test_get_order_not_found(self):
         """It should not Get a order thats not found"""
         response = self.client.get(f"{BASE_URL}/0")
@@ -484,7 +500,7 @@ class TestRestApiServer(TestCase):
         item_id = data["id"]
         data["price"] = 4.75
 
-        # send the update back
+        # send the update backIt should find
         response = self.client.put(
             f"{BASE_URL}/{test_order[1].id}/items/{item_id}",
             json=data,
