@@ -145,7 +145,7 @@ class Item(db.Model):
         """
         logger.info("Processing price query for %s %s...", max_price, min_price)
         return cls.query.filter(cls.price <= max_price).\
-                          filter(cls.price >= min_price)
+            filter(cls.price >= min_price)
 
 
 class Order(db.Model):

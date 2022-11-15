@@ -286,8 +286,7 @@ def list_all_items_prices():
         res["id"] = order.id
         res["name"] = order.name
         res["address"] = order.address
-        res["date_created"] = order.date_created
-        #include only the items that are in price range
+        res["date_created"] = order.date_created.isoformat()
         res["items"] = value
         order_final.append(res)
 
