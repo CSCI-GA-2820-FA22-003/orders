@@ -287,5 +287,5 @@ class Order(db.Model):
 
         """
 
-        logger.info("Processing date query for date %s ...", date_iso)
-        return cls.query.filter(cls.date_created == date_iso)
+        logger.info("Processing date query for date %s ...", date.fromisoformat(date_iso))
+        return cls.query.filter(cls.date_created == date.fromisoformat(date_iso))

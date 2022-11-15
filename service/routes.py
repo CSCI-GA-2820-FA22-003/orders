@@ -271,7 +271,7 @@ def update_item(order_id, item_id):
 ######################################################################
 
 
-@app.route("/orders/date", methods=["GET"])
+@app.route("/orders/date/<date_iso>", methods=["Get"])
 def order_retrieve_based_on_date(date_iso):
     """
     Retrieve order lists based on date created
@@ -280,15 +280,19 @@ def order_retrieve_based_on_date(date_iso):
     app.logger.info(
         "Request to retrieve Orders based on date %s", (date_iso)
     )
-    check_content_type("application/json")
+    # check_content_type("application/json")
 
-    order_list = Order.find_by_date(date_iso)
+    order_list = list(Order.find_by_date(date_iso))
 
     if not order_list:
         abort(status.HTTP_404_NOT_FOUND,
               f"No order was found for date '{date_iso}'")
 
-    return jsonify(order_list), status.HTTP_200_OK
+    ret = []
+    for order in order_list:
+        ret.append(order.serialize())
+    
+    return jsonify(ret), status.HTTP_200_OK
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
