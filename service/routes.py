@@ -1,11 +1,15 @@
 """
 My Service
 
-Describe what your service does here
+The orders resource is a collection of order items where each item represents a
+product id, its quantity, and its price.
+We also implement a subordinate REST API to add order items to the order collection
+(e.g., /orders/{id}/items) and associate the order with a customer preferably through
+its customer id. A good action for the order API is to be able to cancel an order.
+
 """
 
-from flask import abort, jsonify, request, url_for
-
+from flask import abort, jsonify, request, url_for, render_template
 from service.models import Item, Order
 
 # Import Flask application
@@ -20,14 +24,15 @@ from .common import status  # HTTP Status Codes
 def index():
     """Root URL response"""
     app.logger.info("Request for Root URL")
-    return (
-        jsonify(
-            name="Order Demo REST API Service",
-            version="1.0",
-            paths=url_for("list_orders", _external=True),
-        ),
-        status.HTTP_200_OK,
-    )
+    return render_template("index.html")
+    # return (
+    #     jsonify(
+    #         name="Order Demo REST API Service",
+    #         version="1.0",
+    #         paths=url_for("list_orders", _external=True),
+    #     ),
+    #     status.HTTP_200_OK,
+    # )
 
 
 ######################################################################
