@@ -74,8 +74,6 @@ class TestRestApiServer(TestCase):
         """ It should call the home page """
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(data["name"], "Order Demo REST API Service")
 
     def test_get_order_list(self):
         """It should Get a list of orders"""
