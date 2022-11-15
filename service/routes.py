@@ -259,6 +259,41 @@ def update_item(order_id, item_id):
 
 
 ######################################################################
+# LIST ALL ITEMS IN ORDER IN PRICE RANGE
+######################################################################
+@app.route("/orders/prices", methods=["GET"])
+def list_all_items_prices():
+    """
+    Returns all of Orders with items between max and min price
+    """
+    app.logger.info("Request for all Orders in the price range")
+
+    max_price = request.args.get('max_price')
+    min_price = request.args.get('min_price')
+
+    item_list = Item.find_by_price(max_price, min_price)
+    if not item_list:
+        abort(status.HTTP_404_NOT_FOUND, "Items not found")
+
+    results = [item.serialize() for item in item_list]
+    list_order_id = {}
+    for order_id in results:
+        list_order_id.setdefault(order_id["order_id"], []).append(order_id)
+    order_final = []
+    for key, value in list_order_id.items():
+        res = {}
+        order = Order.find(key)
+        res["id"] = order.id
+        res["name"] = order.name
+        res["address"] = order.address
+        res["date_created"] = order.date_created.isoformat()
+        res["items"] = value
+        order_final.append(res)
+
+    return jsonify(order_final), status.HTTP_200_OK
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
