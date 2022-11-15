@@ -291,7 +291,6 @@ def order_retrieve_based_on_date(date_iso):
     ret = []
     for order in order_list:
         ret.append(order.serialize())
-    
     return jsonify(ret), status.HTTP_200_OK
 
 ######################################################################
