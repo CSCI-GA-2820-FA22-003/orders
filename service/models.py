@@ -221,7 +221,8 @@ class Order(db.Model):
             item_list = []
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
-            item_list = data.get("items")
+            if "items" in data.keys():
+                item_list = data.get("items")
             for json_item in item_list:
                 item = Item()
                 item.deserialize(json_item)
