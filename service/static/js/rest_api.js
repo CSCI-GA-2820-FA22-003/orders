@@ -18,6 +18,7 @@ $(function () {
             "name": name,
             "address": address, 
         };
+        console.log(data);
 
         var ajax = $.ajax({
             type: "POST",

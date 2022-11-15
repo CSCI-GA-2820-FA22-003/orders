@@ -53,7 +53,10 @@
     }
     </style>
     <link rel="stylesheet" href="">
-    <script type="text/javascript" src="static/js/rest_api.js"></script> 
+    
+    
+    <script type="text/javascript" src = "{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/rest_api.js') }}"></script> 
  
 </head>
 <body>
@@ -96,7 +99,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="order_name">Order Name:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="tracking_id"
+                    <input type="text" class="form-control" id="order_name"
                         placeholder="Enter Order Name">
                 </div>
             </div>
@@ -107,7 +110,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2" for="order_addr">Order Address:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="tracking_id"
+                    <input type="text" class="form-control" id="order_addr"
                         placeholder="Enter Address for the Order">
                 </div>
             </div>
