@@ -136,6 +136,17 @@ class Item(db.Model):
         logger.info("Processing name query for %s ...", order_id)
         return cls.query.filter(cls.order_id == order_id)
 
+    @classmethod
+    def find_by_price(cls, max_price, min_price):
+        """Returns all Items within the price range
+
+        Args:
+            name (string): the max and min price
+        """
+        logger.info("Processing price query for %s %s...", max_price, min_price)
+        return cls.query.filter(cls.price <= max_price).\
+                          filter(cls.price >= min_price)
+
 
 class Order(db.Model):
     '''
@@ -210,7 +221,7 @@ class Order(db.Model):
             item_list = []
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
-                item_list = data.get("items")
+            item_list = data.get("items")
             for json_item in item_list:
                 item = Item()
                 item.deserialize(json_item)

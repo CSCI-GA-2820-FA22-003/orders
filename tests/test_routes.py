@@ -447,3 +447,56 @@ class TestRestApiServer(TestCase):
             json={"method": "invalid"},
         )
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_get_items_price_min_max(self):
+        """It should Get all Items of an Order that are between max and min price"""
+        test_order = self._create_orders(5)
+        item = ItemFactory()
+        response = self.client.post(
+            f"{BASE_URL}/{test_order[0].id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["price"] = 3.75
+
+        # send the update back
+        response = self.client.put(
+            f"{BASE_URL}/{test_order[0].id}/items/{item_id}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.post(
+            f"{BASE_URL}/{test_order[1].id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["price"] = 4.75
+
+        # send the update back
+        response = self.client.put(
+            f"{BASE_URL}/{test_order[1].id}/items/{item_id}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # retrieve it back
+        response = self.client.get(
+            f"{BASE_URL}/prices?max_price=5.0&min_price=3.0",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
