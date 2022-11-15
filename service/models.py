@@ -162,7 +162,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63))
     # user_id = db.Column(db.Integer, nullable=False)
-    address = db.Column(db.String(63), default="Invalid Address")
+    address = db.Column(db.String(127), default="Invalid Address")
     date_created = db.Column(db.Date(), nullable=False, default=date.today())
     items = db.relationship("Item", backref="order", passive_deletes=True)
 
