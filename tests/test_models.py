@@ -59,7 +59,7 @@ class TestOrderModel(unittest.TestCase):
         # self.assertEqual(order.user_id, 123456)
         self.assertEqual(order.address, "383 LAFAYETTE ST, NEW YORK")
         self.assertEqual(order.date_created, date.today())
-    
+
     def test_add_a_order(self):
         """It should Create a order and add it to the database"""
         orders = Order.all()
@@ -85,7 +85,7 @@ class TestOrderModel(unittest.TestCase):
         self.assertEqual(found_order.id, order.id)
         self.assertEqual(found_order.name, order.name)
         self.assertEqual(found_order.address, order.address)
-    
+
     def test_update_a_order(self):
         """It should Update a Order"""
         order = OrderFactory()
@@ -127,7 +127,7 @@ class TestOrderModel(unittest.TestCase):
         # See if we get back 5 orders
         orders = order.all()
         self.assertEqual(len(orders), 5)
-    
+
     def test_serialize_a_order(self):
         """It should serialize a order"""
         order = OrderFactory()
@@ -141,7 +141,7 @@ class TestOrderModel(unittest.TestCase):
         self.assertEqual(data["address"], order.address)
         self.assertIn("date_created", data)
         self.assertEqual(date.fromisoformat(data["date_created"]), order.date_created)
-    
+
     def test_deserialize_a_order(self):
         """It should de-serialize a order"""
         data = OrderFactory().serialize()
@@ -334,4 +334,19 @@ class TestItemModel(unittest.TestCase):
         self.assertEqual(len(Item.all()), 2+len_items_old)
         # find the 2nd order in the list
         item_list = Item.find_by_product_id(item1.product_id)
+        self.assertEqual(len(list(item_list)), 2)
+
+    def test_find_item_by_price_max_min(self):
+        """It should Find items in orders within the price range"""
+        order1 = OrderFactory()
+        order1.create()
+        order2 = OrderFactory()
+        order2.create()
+        item1 = ItemFactory(order_id=order1.id, product_id=12345, price=3.75)
+        item1.create()
+        item2 = ItemFactory(order_id=order2.id, product_id=2345, price=4.50)
+        item2.create()
+        item3 = ItemFactory(order_id=order2.id, product_id=54345, price=8.75)
+        item3.create()
+        item_list = Item.find_by_price(5, 3)
         self.assertEqual(len(list(item_list)), 2)
