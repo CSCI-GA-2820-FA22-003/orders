@@ -207,6 +207,7 @@ class Order(db.Model):
         try:
             self.name = data["name"]
             self.address = data["address"]
+            item_list = []
             if "date_created" in data.keys():
                 self.date_created = date.fromisoformat(data["date_created"])
                 item_list = data.get("items")
