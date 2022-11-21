@@ -1,17 +1,3 @@
-# Copyright 2016, 2022 John J. Rofrano. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 """
 Package: service
 Package for the application models and service routes
@@ -20,30 +6,47 @@ and SQL database
 """
 import sys
 from flask import Flask
+from .models import Order, Item, db
 from service import config
-from service.utils import log_handlers
+from .common import log_handlers
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
 
 # Create Flask application
 app = Flask(__name__)
 app.config.from_object(config)
 
+# set optional bootswatch theme
+app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order
-from service import routes, models        # noqa: F401, E402
-from service.utils import error_handlers, cli_commands  # noqa: F401, E402
+from service import routes         # noqa: E402, E261
+# pylint: disable=wrong-import-position
+from .common import error_handlers  # noqa: F401 E402
 
 # Set up logging for production
 log_handlers.init_logging(app, "gunicorn.error")
 
 app.logger.info(70 * "*")
-app.logger.info("  P E T   S T O R E   S E R V I C E  ".center(70, "*"))
+app.logger.info("  S E R V I C E   R U N N I N G  ".center(70, "*"))
 app.logger.info(70 * "*")
 
+app.logger.info("App Root Path: {}".format(app.root_path))
+
 try:
-    models.init_db(app)  # make our sqlalchemy tables
-except Exception as error:  # pylint: disable=broad-except
+    routes.init_db()  # make our SQLAlchemy tables
+except Exception as error:
     app.logger.critical("%s: Cannot continue", error)
     # gunicorn requires exit code 4 to stop spawning workers when they die
     sys.exit(4)
+
+
+admin = Admin(app, name='order', template_mode='bootstrap3')
+
+# Add administrative views here
+admin.add_view(ModelView(Order, db.session))
+admin.add_view(ModelView(Item, db.session))
 
 app.logger.info("Service initialized!")

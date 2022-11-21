@@ -16,22 +16,38 @@
 Test Factory to make fake objects for testing
 """
 from datetime import date
+
 import factory
-from factory.fuzzy import FuzzyChoice, FuzzyDate
-from service.models import Pet, Gender
+from factory.fuzzy import FuzzyDate
+from service.models import Order, Item
+import random
 
 
-class PetFactory(factory.Factory):
-    """Creates fake pets that you don't have to feed"""
+class OrderFactory(factory.Factory):
+    """Creates fake orders that you don't have to feed"""
 
     class Meta:  # pylint: disable=too-few-public-methods
         """Maps factory to data model"""
 
-        model = Pet
+        model = Order
 
     id = factory.Sequence(lambda n: n)
     name = factory.Faker("first_name")
-    category = FuzzyChoice(choices=["dog", "cat", "bird", "fish"])
-    available = FuzzyChoice(choices=[True, False])
-    gender = FuzzyChoice(choices=[Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
-    birthday = FuzzyDate(date(2008, 1, 1))
+    address = factory.Faker("address")
+    date_created = FuzzyDate(date(2008, 1, 1))
+
+
+class ItemFactory(factory.Factory):
+    """Creates fake Items for orders"""
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        """Maps factory to data model"""
+        model = Item
+
+    id = factory.Sequence(lambda n: n)
+    product_id = random.randint(1, 20000)
+    price = random.random() * 10 + 10
+    quantity = random.randint(1, 20)
+    order_id = random.randint(1, 20)
+    status = "active"
+    # order = factory.SubFactory(OrderFactory)

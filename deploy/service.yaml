@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: lab-bluemix-cf
+  name: orders
 spec:
   selector:
-    app: lab-bluemix-cf
+    app: orders
   type: NodePort
   internalTrafficPolicy: Local
   ports:

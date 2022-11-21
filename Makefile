@@ -1,12 +1,12 @@
 # These can be overidden with env vars.
 REGISTRY ?= us.icr.io
-NAMESPACE ?= nyu_devops
-IMAGE_NAME ?= lab-bluemix-cf
-IMAGE_TAG ?= 1.0
+NAMESPACE ?= nyu_devops_orders
+IMAGE_NAME ?= orders
+IMAGE_TAG ?= 1.1
 IMAGE ?= $(REGISTRY)/$(NAMESPACE)/$(IMAGE_NAME):$(IMAGE_TAG)
 # PLATFORM ?= "linux/amd64,linux/arm64"
 PLATFORM ?= "linux/amd64"
-CLUSTER ?= nyu-devops
+CLUSTER ?= nyu-devops-orders
 
 .PHONY: help
 help: ## Display this help

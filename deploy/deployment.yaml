@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lab-bluemix-cf
+  name: orders
   labels:
-    app: lab-bluemix-cf
+    app: orders
 spec:
   replicas: 2
   strategy:
@@ -13,18 +13,18 @@ spec:
       maxUnavailable: 50%
   selector:
     matchLabels:
-      app: lab-bluemix-cf
+      app: orders
   template:
     metadata:
       labels:
-        app: lab-bluemix-cf
+        app: orders
     spec:
       imagePullSecrets:
       - name: all-icr-io
       restartPolicy: Always
       containers:
-      - name: lab-bluemix-cf
-        image: us.icr.io/nyu_devops/lab-bluemix-cf:1.0
+      - name: orders
+        image: us.icr.io/nyu_devops_orders/orders:1.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -39,7 +39,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 30
           httpGet:
-            path: /health
+            path: /
             port: 8080
         resources:
           limits:

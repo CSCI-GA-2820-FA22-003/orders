@@ -6,6 +6,7 @@ Flask==2.1.2
 Flask-SQLAlchemy==2.5.1
 psycopg2==2.9.3
 python-dotenv==0.20.0
+flask-admin==1.6.0
 
 # Runtime tools
 gunicorn==20.1.0
@@ -25,4 +26,3 @@ codecov==2.1.12
 
 # Utilities
 httpie==3.2.1
-
