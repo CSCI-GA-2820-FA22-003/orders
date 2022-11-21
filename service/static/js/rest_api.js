@@ -5,6 +5,10 @@ $(function () {
         $("#flash_message").empty();
         $("#flash_message").append(message);
     }
+
+    function update_form_data(message) {
+        $("#flash_message").append(message);
+    }
      
     // Create an Order
     $("#create-btn").click(function () {
@@ -28,8 +32,8 @@ $(function () {
         });
 
         ajax.done(function (res) {
-            update_form_data(res)
-            flash_message("Success")
+            flash_message("Success ")
+            update_form_data(JSON.stringify(res))
         });
 
         ajax.fail(function (res) {
