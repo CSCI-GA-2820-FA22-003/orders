@@ -2,7 +2,6 @@
 Test cases for Order and Item Model
 
 """
-from itertools import product
 import os
 import logging
 import unittest
