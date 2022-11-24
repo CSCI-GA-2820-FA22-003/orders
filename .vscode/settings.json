@@ -1,5 +1,6 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
+    "python.pythonPath": "/usr/local/bin/python",
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "python.testing.nosetestsEnabled": true,
@@ -11,14 +12,8 @@
         "-s",
         "./tests",
         "-p",
-        "test_*.py"
+        "test*.py"
     ],
-    "cucumberautocomplete.steps": ["features/steps/*.py"],
-    "cucumberautocomplete.syncfeatures": "features/*.feature",
-    "cucumberautocomplete.strictGherkinCompletion": true,
-    "cucumberautocomplete.strictGherkinValidation": true,
-    "cucumberautocomplete.smartSnippets": true,
-    "cucumberautocomplete.gherkinDefinitionPart": "@(given|when|then)\\(",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -27,6 +22,5 @@
         "**/.DS_Store": true,
         "**/*.pyc": true,
         "**/__pycache__": true
-    }
+    }    
 }
-
