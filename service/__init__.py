@@ -11,6 +11,7 @@ from service import config
 from .common import log_handlers
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_restx import Api
 
 
 # Create Flask application
@@ -19,6 +20,30 @@ app.config.from_object(config)
 
 # set optional bootswatch theme
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+
+######################################################################
+# Configure Swagger before initializing it
+######################################################################
+# Document the type of authorization required
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'X-Api-Key'
+    }
+}
+
+api = Api(
+    app,
+    version='1.0.0',
+    title='Order Demo REST API Service',
+    description='This is a sample server Order store server.',
+    default='orders',
+    default_label='Order operations',
+    doc='/apidocs',
+    authorizations=authorizations,
+    prefix='/api'
+    )
 
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order

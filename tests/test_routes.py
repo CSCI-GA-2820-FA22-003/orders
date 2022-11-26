@@ -87,7 +87,7 @@ class TestRestApiServer(TestCase):
         """It should Get a single order"""
         # get the id of a order
         test_order = self._create_orders(1)[0]
-        response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        response = self.client.get(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], test_order.name)
@@ -97,7 +97,7 @@ class TestRestApiServer(TestCase):
         # get the id of a order
         test_order = self._create_orders(1)[0]
         
-        response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        response = self.client.get(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], test_order.name)
@@ -110,11 +110,11 @@ class TestRestApiServer(TestCase):
 
     def test_get_order_not_found(self):
         """It should not Get a order thats not found"""
-        response = self.client.get(f"{BASE_URL}/0")
+        response = self.client.get(f"api/orders/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
-        self.assertIn("Item with id '0' was not found.", data["message"])
+        self.assertIn("Order with id '0' was not found.", data["message"])
 
     def test_create_order(self):
         """It should Create a new order"""
@@ -152,7 +152,7 @@ class TestRestApiServer(TestCase):
         new_order = response.get_json()
         logging.debug(new_order)
         new_order["address"] = "Tandon Brooklyn downtown"
-        response = self.client.put(f"{BASE_URL}/{new_order['id']}", json=new_order)
+        response = self.client.put(f"api/orders/{new_order['id']}", json=new_order)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_order = response.get_json()
         self.assertEqual(updated_order["address"], "Tandon Brooklyn downtown")
@@ -166,7 +166,7 @@ class TestRestApiServer(TestCase):
 
         # update the order
         new_order = response.get_json()
-        response = self.client.put(f"{BASE_URL}/1000", json=new_order)
+        response = self.client.put(f"api/orders/1000", json=new_order)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
@@ -175,7 +175,7 @@ class TestRestApiServer(TestCase):
     def test_delete_order(self):
         """It should Delete a order"""
         test_order = self._create_orders(1)[0]
-        response = self.client.delete(f"{BASE_URL}/{test_order.id}")
+        response = self.client.delete(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
@@ -190,7 +190,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # try to delete order
-        response = self.client.delete(f"{BASE_URL}/1000")
+        response = self.client.delete(f"api/orders/1000")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
@@ -407,12 +407,12 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         #delete order
-        response = self.client.delete(f"{BASE_URL}/{test_order.id}")
+        response = self.client.delete(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
 
         # check they are deleted
-        response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        response = self.client.get(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_item_with_order_not_exist(self):
