@@ -77,7 +77,7 @@ $(function () {
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/api/orders",
+            url: "/orders",
             data: ''
         })
 
