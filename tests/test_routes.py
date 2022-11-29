@@ -57,7 +57,7 @@ class TestRestApiServer(TestCase):
         orders = []
         for _ in range(count):
             test_order = OrderFactory()
-            response = self.client.post(BASE_URL, json=test_order.serialize())
+            response = self.client.post("/api/orders", json=test_order.serialize())
             self.assertEqual(
                 response.status_code, status.HTTP_201_CREATED, "Could not create test order"
             )
@@ -78,7 +78,7 @@ class TestRestApiServer(TestCase):
     def test_get_order_list(self):
         """It should Get a list of orders"""
         self._create_orders(5)
-        response = self.client.get(BASE_URL)
+        response = self.client.get("/api/orders")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
@@ -120,7 +120,7 @@ class TestRestApiServer(TestCase):
         """It should Create a new order"""
         test_order = OrderFactory()
         logging.debug("Test order: %s", test_order.serialize())
-        response = self.client.post(BASE_URL, json=test_order.serialize())
+        response = self.client.post("/api/orders", json=test_order.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Make sure location header is set
@@ -145,7 +145,7 @@ class TestRestApiServer(TestCase):
         """It should Update an existing order"""
         # create a order to update
         test_order = OrderFactory()
-        response = self.client.post(BASE_URL, json=test_order.serialize())
+        response = self.client.post("/api/orders", json=test_order.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # update the order
@@ -161,7 +161,7 @@ class TestRestApiServer(TestCase):
         """It should not Update a order thats not found"""
         # create a order to update
         test_order = OrderFactory()
-        response = self.client.post(BASE_URL, json=test_order.serialize())
+        response = self.client.post("/api/orders", json=test_order.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # update the order
@@ -179,14 +179,14 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
-        response = self.client.get(f"{BASE_URL}/{test_order.id}")
+        response = self.client.get(f"/api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_order_not_found(self):
         """It should not delete an order thats not found"""
         # create a order
         test_order = OrderFactory()
-        response = self.client.post(BASE_URL, json=test_order.serialize())
+        response = self.client.post("/api/orders", json=test_order.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # try to delete order

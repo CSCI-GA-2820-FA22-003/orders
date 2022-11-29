@@ -49,17 +49,46 @@ def index():
 
 
 ######################################################################
-# LIST ALL ORDERS
+#  PATH: /orders
 ######################################################################
-@app.route("/orders", methods=["GET"])
-def list_orders():
-    """Returns all of the Orders"""
-    app.logger.info("Request for order list")
-    orders = Order.all()
+@api.route('/orders', strict_slashes=False)
+class OrderCollection(Resource):
+    """ Handles all interactions with collections of Orders """
+    # ------------------------------------------------------------------
+    # LIST ALL ORDERS
+    # ------------------------------------------------------------------
+    @api.doc('list_orders')
+    @api.marshal_list_with(order_model)
+    def get(self):
+        """ Returns all of the Orders """
+        app.logger.info('Request to list Pets...')
 
-    results = [o.serialize() for o in orders]
-    app.logger.info("Returning %d items", len(results))
-    return jsonify(results), status.HTTP_200_OK
+        orders = Order.all()
+
+        app.logger.info('[%s] Orders returned', len(orders))
+        results = [order.serialize() for order in orders]
+        return results, status.HTTP_200_OK
+
+    # ------------------------------------------------------------------
+    # ADD A NEW ORDER
+    # ------------------------------------------------------------------
+    @api.doc('create_orders')
+    @api.response(400, 'The posted data was not valid')
+    @api.expect(create_model)
+    @api.marshal_with(order_model, code=201)
+    def post(self):
+        """
+        Creates a Pet
+        This endpoint will create an Order based the data in the body that is posted
+        """
+        app.logger.info('Request to Create a Order')
+        order = Order()
+        app.logger.debug('Payload = %s', api.payload)
+        order.deserialize(api.payload)
+        order.create()
+        app.logger.info('Order with new id [%s] created!', order.id)
+        location_url = api.url_for(OrderResource, order_id=order.id, _external=True)
+        return order.serialize(), status.HTTP_201_CREATED, {'Location': location_url}
 
 
 ######################################################################
@@ -138,28 +167,6 @@ class OrderResource(Resource):
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
 
         return '', status.HTTP_204_NO_CONTENT
-
-
-######################################################################
-# ADD A NEW ORDER
-######################################################################
-@app.route("/orders", methods=["POST"])
-def create_orders():
-    """
-    Add a new order
-    This endpoint will create an order based the data in the body that is posted
-    """
-    app.logger.info("Request to create an order")
-    check_content_type("application/json")
-    order = Order()
-    order.deserialize(request.get_json())
-    order.create()
-    message = order.serialize()
-    location_url = api.url_for(OrderResource, order_id=order.id, _external=True)
-
-    app.logger.info("Order with ID [%s] created.", order.id)
-
-    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################
