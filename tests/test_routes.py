@@ -175,7 +175,7 @@ class TestRestApiServer(TestCase):
     def test_delete_order(self):
         """It should Delete a order"""
         test_order = self._create_orders(1)[0]
-        response = self.client.delete(f"/api/orders/{test_order.id}")
+        response = self.client.delete(f"api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
@@ -201,7 +201,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -220,7 +220,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -249,24 +249,25 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # get the list back and make sure there are 2
-        resp = self.client.get(f"{BASE_URL}/{test_order.id}/items")
+        resp = self.client.get(f"/api/orders/{test_order.id}/items")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         data = resp.get_json()
+        logging.debug(data)
         self.assertEqual(len(data), 2)
 
     def test_get_item_with_order_not_exist(self):
@@ -274,7 +275,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -285,7 +286,7 @@ class TestRestApiServer(TestCase):
 
         # fetch it back
         response = self.client.get(
-            f"{BASE_URL}/10/items/{item_id}",
+            f"/api/orders/10/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -296,7 +297,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"{BASE_URL}/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -332,7 +333,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -344,7 +345,7 @@ class TestRestApiServer(TestCase):
 
         # try to update
         response = self.client.put(
-            f"{BASE_URL}/4533/items/{item_id}",
+            f"/api/orders/4533/items/{item_id}",
             json=data,
             content_type="application/json",
         )
@@ -355,7 +356,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -383,7 +384,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"{BASE_URL}/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -420,7 +421,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -431,7 +432,7 @@ class TestRestApiServer(TestCase):
 
         # fetch it back
         response = self.client.delete(
-            f"{BASE_URL}/10/items/{item_id}",
+            f"/api/orders/10/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -441,7 +442,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/txt",
         )
@@ -451,7 +452,7 @@ class TestRestApiServer(TestCase):
         """It should not receive data with no content type"""
         test_order = self._create_orders(1)[0]
         response = self.client.post(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
@@ -459,7 +460,7 @@ class TestRestApiServer(TestCase):
         """It should not allow an illegal method call"""
         test_order = self._create_orders(1)[0]
         response = self.client.delete(
-            f"/orders/{test_order.id}/items",
+            f"/api/orders/{test_order.id}/items",
             json={"method": "invalid"},
         )
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -469,7 +470,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(5)
         item = ItemFactory()
         response = self.client.post(
-            f"{BASE_URL}/{test_order[0].id}/items",
+            f"/api/orders/{test_order[0].id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -489,7 +490,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.client.post(
-            f"{BASE_URL}/{test_order[1].id}/items",
+            f"/api/orders/{test_order[1].id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
