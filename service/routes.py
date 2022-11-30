@@ -17,23 +17,6 @@ from flask_restx import Resource, fields
 from . import app, api
 from .common import status  # HTTP Status Codes
 
-# Define the model so that the docs reflect what can be sent
-create_model = api.model('Order', {
-    'name': fields.String(required=True, description='The name of the Order'),
-    'address': fields.String(
-        required=True,
-        description='The address of the order(e.g.: 9609 Helen Rd. Wisconsin Rapids, WI 54494).'
-        ),
-    'date_created': fields.Date(description='The date order created'),
-    'items': fields.List(fields.Integer(description='List of item id that order contains'))
-})
-
-order_model = api.inherit(
-    'OrderModel',
-    create_model,
-    {'id': fields.Integer(readOnly=True, description='The unique id assigned internally by service'), }
-)
-
 create_item_model = api.model('Item', {
     'product_id': fields.Integer(required=True, description='The ID of the product'),
     'price': fields.Float(required=True, description='The price of the product'),
@@ -45,6 +28,23 @@ create_item_model = api.model('Item', {
 item_model = api.inherit(
     'ItemModel',
     create_item_model,
+    {'id': fields.Integer(readOnly=True, description='The unique id assigned internally by service'), }
+)
+
+# Define the model so that the docs reflect what can be sent
+create_model = api.model('Order', {
+    'name': fields.String(required=True, description='The name of the Order'),
+    'address': fields.String(
+        required=True,
+        description='The address of the order(e.g.: 9609 Helen Rd. Wisconsin Rapids, WI 54494).'
+        ),
+    'date_created': fields.Date(description='The date order created'),
+    'items': fields.List(fields.Nested(item_model, description='List of items that order contains'))
+})
+
+order_model = api.inherit(
+    'OrderModel',
+    create_model,
     {'id': fields.Integer(readOnly=True, description='The unique id assigned internally by service'), }
 )
 
@@ -331,66 +331,108 @@ class ItemResource(Resource):
 
 
 ######################################################################
-# QUERY BASED ON DATE
+#  PATH: /orders/date/<date_iso>
 ######################################################################
+@api.route('/orders/date/<date_iso>', strict_slashes=False)
+@api.param('date_iso', 'The date in ISO format')
+class DateQuery(Resource):
+    """ Handles all interactions with dates"""
+    # ------------------------------------------------------------------
+    # ORDER QUERY BASED ON DATE
+    # ------------------------------------------------------------------
+    @api.doc('order_retrieve_based_on_date')
+    @api.marshal_list_with(order_model)
+    def get(self, date_iso):
+        """ Returns all of the Orders """
+        app.logger.info(
+            "Request to retrieve Orders based on date %s", (date_iso)
+        )
+        # check_content_type("application/json")
+
+        order_list = list(Order.find_by_date(date_iso))
+
+        if not order_list:
+            abort(status.HTTP_404_NOT_FOUND, f"No order was found for date '{date_iso}'")
+
+        ret = []
+        for order in order_list:
+            ret.append(order.serialize())
+        return ret, status.HTTP_200_OK
 
 
-@app.route("/orders/date/<date_iso>", methods=["Get"])
-def order_retrieve_based_on_date(date_iso):
-    """
-    Retrieve order lists based on date created
-    This endpoint will return a list of orders created on a specific date
-    """
-    app.logger.info(
-        "Request to retrieve Orders based on date %s", (date_iso)
-    )
-    # check_content_type("application/json")
+######################################################################
+#  PATH: /orders/prices
+######################################################################
+@api.route('/orders/prices', strict_slashes=False)
+class PriceQuery(Resource):
+    """ Handles all interactions with dates"""
+    # ------------------------------------------------------------------
+    # IST ALL ITEMS IN ORDER IN PRICE RANGE
+    # ------------------------------------------------------------------
+    @api.doc('list_all_items_prices')
+    @api.marshal_list_with(order_model)
+    def post(self):
+        """ Returns all of the Orders """
+        app.logger.info("Request for all Orders in the price range")
 
-    order_list = list(Order.find_by_date(date_iso))
+        data = request.get_json()
+        max_price = data['max_price']
+        min_price = data['min_price']
 
-    if not order_list:
-        abort(status.HTTP_404_NOT_FOUND,
-              f"No order was found for date '{date_iso}'")
+        item_list = Item.find_by_price(max_price, min_price)
+        if not item_list:
+            abort(status.HTTP_404_NOT_FOUND, "Items not found")
 
-    ret = []
-    for order in order_list:
-        ret.append(order.serialize())
-    return jsonify(ret), status.HTTP_200_OK
+        results = [item.serialize() for item in item_list]
+        list_order_id = {}
+        for order_id in results:
+            list_order_id.setdefault(order_id["order_id"], []).append(order_id)
+        order_final = []
+        for key, value in list_order_id.items():
+            res = {}
+            order = Order.find(key)
+            res["id"] = order.id
+            res["name"] = order.name
+            res["address"] = order.address
+            res["date_created"] = order.date_created.isoformat()
+            res["items"] = value
+            order_final.append(order.serialize())
+        return order_final, status.HTTP_200_OK
 
 
 ######################################################################
 # LIST ALL ITEMS IN ORDER IN PRICE RANGE
 ######################################################################
-@app.route("/orders/prices", methods=["GET"])
-def list_all_items_prices():
-    """
-    Returns all of Orders with items between max and min price
-    """
-    app.logger.info("Request for all Orders in the price range")
+# @app.route("/orders/prices", methods=["GET"])
+# def list_all_items_prices():
+#     """
+#     Returns all of Orders with items between max and min price
+#     """
+#     app.logger.info("Request for all Orders in the price range")
 
-    max_price = request.args.get('max_price')
-    min_price = request.args.get('min_price')
+#     max_price = request.args.get('max_price')
+#     min_price = request.args.get('min_price')
 
-    item_list = Item.find_by_price(max_price, min_price)
-    if not item_list:
-        abort(status.HTTP_404_NOT_FOUND, "Items not found")
+#     item_list = Item.find_by_price(max_price, min_price)
+#     if not item_list:
+#         abort(status.HTTP_404_NOT_FOUND, "Items not found")
 
-    results = [item.serialize() for item in item_list]
-    list_order_id = {}
-    for order_id in results:
-        list_order_id.setdefault(order_id["order_id"], []).append(order_id)
-    order_final = []
-    for key, value in list_order_id.items():
-        res = {}
-        order = Order.find(key)
-        res["id"] = order.id
-        res["name"] = order.name
-        res["address"] = order.address
-        res["date_created"] = order.date_created.isoformat()
-        res["items"] = value
-        order_final.append(res)
+#     results = [item.serialize() for item in item_list]
+#     list_order_id = {}
+#     for order_id in results:
+#         list_order_id.setdefault(order_id["order_id"], []).append(order_id)
+#     order_final = []
+#     for key, value in list_order_id.items():
+#         res = {}
+#         order = Order.find(key)
+#         res["id"] = order.id
+#         res["name"] = order.name
+#         res["address"] = order.address
+#         res["date_created"] = order.date_created.isoformat()
+#         res["items"] = value
+#         order_final.append(res)
 
-    return jsonify(order_final), status.HTTP_200_OK
+#     return jsonify(order_final), status.HTTP_200_OK
 
 
 ######################################################################
