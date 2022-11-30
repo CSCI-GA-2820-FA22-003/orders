@@ -89,7 +89,7 @@ class OrderCollection(Resource):
     @api.marshal_with(order_model, code=201)
     def post(self):
         """
-        Creates a Pet
+        Creates a Order
         This endpoint will create an Order based the data in the body that is posted
         """
         app.logger.info('Request to Create a Order')
@@ -178,6 +178,61 @@ class OrderResource(Resource):
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
 
         return '', status.HTTP_204_NO_CONTENT
+
+
+######################################################################
+#  PATH: /orders/<order_id>/items/
+######################################################################
+@api.route('/orders/<order_id>/items/', strict_slashes=False)
+@api.param('order_id', 'The Order identifier')
+class ItemCollection(Resource):
+    """ Handles all interactions with collections of Items"""
+    # ------------------------------------------------------------------
+    # LIST ALL ITEM
+    # ------------------------------------------------------------------
+    @api.doc('list_items')
+    @api.marshal_list_with(item_model)
+    def get(self, order_id):
+        """ Returns all of the Orders """
+        app.logger.info("Request for all Items for Order with id: %s", order_id)
+        order = Order.find(order_id)
+        if not order:
+            abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+
+        results = [item.serialize() for item in order.items]
+        return results, status.HTTP_200_OK
+
+    # ------------------------------------------------------------------
+    # ADD A NEW ITEM
+    # ------------------------------------------------------------------
+    @api.doc('create_items')
+    @api.response(400, 'The posted data was not valid')
+    @api.expect(create_item_model)
+    @api.marshal_with(item_model, code=201)
+    def post(self, order_id):
+        """
+        Creates an item
+        This endpoint will create an Item based the data in the body that is posted
+        """
+        app.logger.info("Request to create an item for order")
+        check_content_type("application/json")
+
+        order = Order.find(order_id)
+        if not order:
+            abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
+
+        data = request.get_json()
+
+        app.logger.debug("Payload = %s", data)
+        item = Item()
+        item.deserialize(data)
+        item.order_id = order_id
+        item.create()
+
+        location_url = api.url_for(ItemResource, item_id=item.id, order_id=order.id, _external=True)
+        app.logger.info("Item for order ID [%s] created.", id)
+
+        return item.serialize(), status.HTTP_201_CREATED, {'Location': location_url}
 
 
 ######################################################################
@@ -273,52 +328,6 @@ class ItemResource(Resource):
         if item:
             item.delete()
         return "", status.HTTP_204_NO_CONTENT
-
-
-######################################################################
-# LIST ITEMS
-######################################################################
-@app.route("/orders/<int:order_id>/items", methods=["GET"])
-def list_all_items(order_id):
-    """Returns all of the Items for an Order"""
-    app.logger.info("Request for all Items for Order with id: %s", order_id)
-    order = Order.find(order_id)
-    if not order:
-        abort(status.HTTP_404_NOT_FOUND,
-              f"Order with id '{order_id}' was not found.")
-
-    results = [item.serialize() for item in order.items]
-    return jsonify(results), status.HTTP_200_OK
-
-
-######################################################################
-# ADD A NEW ITEM
-######################################################################
-@app.route("/orders/<int:order_id>/items", methods=["POST"])
-def create_items(order_id):
-    """
-    Add a new item
-    This endpoint will create an items based the data in the body that is posted
-    """
-    app.logger.info("Request to create an item for order")
-    check_content_type("application/json")
-
-    order = Order.find(order_id)
-    if not order:
-        abort(status.HTTP_404_NOT_FOUND,
-              f"Order with id '{order_id}' was not found.")
-
-    data = request.get_json()
-
-    app.logger.debug("Payload = %s", data)
-    item = Item()
-    item.deserialize(data)
-    item.order_id = order_id
-    item.create()
-
-    app.logger.info("Item for order ID [%s] created.", id)
-
-    return item.serialize(), status.HTTP_201_CREATED
 
 
 ######################################################################
