@@ -169,4 +169,43 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
     });
+
+    // List all Items of an Order
+    $("#listall-item-btn").click(function () {
+
+        var order_id = $("#order_id_items").val();
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/api/orders/" + order_id + "/items",
+            data: ''
+        })
+
+        ajax.done(function (res) {
+            $("#list_item_results").empty();
+            $("#list_item_results").append('<table class="table-striped" cellpadding="10">');
+            var header = '<tr>'
+            header += '<th">id</th>'
+            header += '<th">order_id</th>'
+            header += '<th">product_id</th>'
+            header += '<th">price</th>'
+            header += '<th">quantity</th>'
+            header += '<th">status</th></tr>'
+            $("#list_item_results").append(header); 
+            for (var i = 0; i < res.length; i++) {
+                var item = res[i];
+                var row = "<tr><td style='padding-right:2px'>" + item.id + "</td><td style='padding-right:2px'>" + item.order_id + "</td><td style='padding-right:2px'>" 
+                          + item.product_id + "</td><td style='padding-right:2px'>" + item.price + "</td><td style='padding-right:2px'>" 
+                          + item.quantity + "</td><td style='padding-right:2px'>" + item.status + "</td></tr>";
+                $("#list_item_results").append(row);
+            }
+            $("#list_item_results").append('</table>');
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
 })
