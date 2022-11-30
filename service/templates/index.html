@@ -15,6 +15,7 @@
     background-color: #f1f1f1;
     width: 30%;
     height: 300px;
+    overflow-y: auto;
     }
 
     /* Style the buttons inside the tab */
@@ -80,6 +81,7 @@
   <button class="tablinks" onclick="openTab(event, 'update')" >Update an order</button>
   <button class="tablinks" onclick="openTab(event, 'listall')">List all orders</button> 
   <button class="tablinks" onclick="openTab(event, 'delete')">Delete an order</button> 
+  <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button> 
 </div>
 
 <div id="create" class="tabcontent">
@@ -138,7 +140,7 @@
           
           <div class="form-horizontal">
               <div class="form-group">
-                  <label class="control-label col-sm-2" for="order_id">Order ID:</label>
+                  <label class="control-label col-sm-2" for="update_order_id">Order ID:</label>
                   <div class="col-sm-6">
                       <input type="text" class="form-control" id="update_order_id" placeholder="Enter ID of Order">
                   </div>
@@ -148,7 +150,7 @@
           <br/>
           <div class="form-horizontal"> 
               <div class="form-group">
-                  <label class="control-label col-sm-2" for="order_name">Order Name:</label>
+                  <label class="control-label col-sm-2" for="update_order_name">Order Name:</label>
                   <div class="col-sm-10">
                       <input type="text" class="form-control" id="update_order_name"
                           placeholder="Enter Order Name">
@@ -159,7 +161,7 @@
           <br/>
           <div class="form-horizontal"> 
               <div class="form-group">
-                  <label class="control-label col-sm-2" for="order_addr">Order Address:</label>
+                  <label class="control-label col-sm-2" for="update_order_addr">Order Address:</label>
                   <div class="col-sm-10">
                       <input type="text" class="form-control" id="update_order_addr"
                           placeholder="Enter Address for the Order">
@@ -229,6 +231,87 @@
   
       </div>
    </div>
+</div>
+
+<div id="create-item" class="tabcontent">
+    <h3>Create an item</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+          
+          <div class="form-horizontal">
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_id">Item ID:</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control" id="item_id" placeholder="Enter ID of Item">
+                  </div>
+              </div>
+          </div> 
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_order_id">Order ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_order_id"
+                          placeholder="Enter Order ID">
+                  </div>
+              </div>
+          </div>
+           
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_product_id">Product ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_product_id"
+                          placeholder="Enter Product ID">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_price">Price:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_price"
+                          placeholder="Enter Item Price">
+                  </div>
+              </div>
+          </div>
+          
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_quantity">Quantity:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_quantity"
+                          placeholder="Enter Item Quantity">
+                  </div>
+              </div>
+          </div>
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_status">Status:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_status"
+                          placeholder="Enter Item Status">
+                  </div>
+              </div>
+          </div>
+  
+          <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="create-item-btn">Create Item</button> 
+              </div>
+          </div>
+  
+      </div>
+    </div>
 </div>
 
 <script>
