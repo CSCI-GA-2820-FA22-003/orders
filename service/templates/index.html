@@ -81,7 +81,8 @@
   <button class="tablinks" onclick="openTab(event, 'update')" >Update an order</button>
   <button class="tablinks" onclick="openTab(event, 'listall')">List all orders</button> 
   <button class="tablinks" onclick="openTab(event, 'delete')">Delete an order</button> 
-  <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button> 
+  <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button>
+  <button class="tablinks" onclick="openTab(event, 'listall-item')">List all items of an Order</button>
 </div>
 
 <div id="create" class="tabcontent">
@@ -310,6 +311,46 @@
               </div>
           </div>
   
+      </div>
+    </div>
+</div>
+
+<div id="listall-item" class="tabcontent">
+    <h3>List all items of an Order</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="order_id_items">Order ID:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="order_id_items" placeholder="Enter ID of Order">
+                </div>
+            </div>
+        </div> 
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="listall-item-btn"> List all items of an Order</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_item_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">OrderID</th>
+                              <th class="col-md-4">ProductID</th>
+                              <th class="col-md-3">Price</th>
+                              <th class="col-md-3">Quantity</th>
+                              <th class="col-md-4">Status</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+          </div>
       </div>
     </div>
 </div>
