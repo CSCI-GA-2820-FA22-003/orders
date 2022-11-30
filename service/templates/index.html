@@ -84,6 +84,7 @@
   <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item')">List all items of an Order</button>
   <button class="tablinks" onclick="openTab(event, 'update-item')">Update an Item</button>
+  <button class="tablinks" onclick="openTab(event, 'delete-item')">Delete an Item</button>
 </div>
 
 <div id="create" class="tabcontent">
@@ -425,6 +426,42 @@
           <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10"> 
                   <button type="submit" class="btn btn-success" id="update-item-btn">Update Item</button> 
+              </div>
+          </div>
+  
+       </div>
+      </div>
+    </div>
+</div>
+
+<div id="delete-item" class="tabcontent">
+    <h3>Delete an item</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+          
+          <div class="form-horizontal">
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="order_id_delete">Order ID:</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control" id="order_id_delete" placeholder="Enter ID of Order">
+                  </div>
+          </div> 
+           
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_id_delete">Item ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_id_delete" placeholder="Enter Item ID">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="delete-item-btn">Delete Item</button> 
               </div>
           </div>
   

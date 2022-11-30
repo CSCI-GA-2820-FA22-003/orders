@@ -85,6 +85,7 @@ $(function () {
             //alert(res.toSource())
             $("#list_results").empty();
             $("#list_results").append('<table class="table-striped" cellpadding="10">');
+
             var header = '<tr>'
             header += '<th">id</th>'
             header += '<th">name</th>'
@@ -230,6 +231,34 @@ $(function () {
 
         var ajax = $.ajax({
             type: "PUT",
+            url: "/api/orders/" + order_id + "/items/" + item_id,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function (res) {
+            flash_message("Success ")
+            update_form_data(JSON.stringify(res))
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
+
+    // Delete an Item
+    $("#delete-item-btn").click(function () {
+
+        var order_id = $("#order_id_delete").val();
+        var item_id = $("#item_id_delete").val();
+
+        var data = {
+            "order_id": order_id,
+            "id": item_id
+        };
+
+        var ajax = $.ajax({
+            type: "DELETE",
             url: "/api/orders/" + order_id + "/items/" + item_id,
             contentType: "application/json",
             data: JSON.stringify(data),
