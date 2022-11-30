@@ -132,4 +132,41 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
     });
+
+    // Create an item
+    $("#create-item-btn").click(function () {
+
+        var item_id = $("#item_id").val();
+        var order_id = $("#item_order_id").val();
+        var product_id = $("#item_product_id").val();
+        var price = $("#item_price").val(); 
+        var quantity = $("#item_quantity").val(); 
+        var status = $("#item_status").val(); 
+
+        var data = {
+            "id": item_id,
+            "order_id": order_id,
+            "product_id": product_id, 
+            "price": price,
+            "quantity": quantity,
+            "status": status
+        };
+        console.log(data)
+
+        var ajax = $.ajax({
+            type: "POST",
+            url: "/api/orders/" + order_id + "/items",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function (res) {
+            flash_message("Success ")
+            update_form_data(JSON.stringify(res))
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
 })
