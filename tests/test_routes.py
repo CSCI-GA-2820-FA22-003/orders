@@ -142,7 +142,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(date.fromisoformat(new_order["date_created"]), test_order.date_created)
 
     def test_update_order(self):
-        """It should Update an existing order"""
+        """It should update an existing order"""
         # create a order to update
         test_order = OrderFactory()
         response = self.client.post("/api/orders", json=test_order.serialize())
@@ -152,7 +152,7 @@ class TestRestApiServer(TestCase):
         new_order = response.get_json()
         logging.debug(new_order)
         new_order["address"] = "Tandon Brooklyn downtown"
-        response = self.client.put(f"api/orders/{new_order['id']}", json=new_order)
+        response = self.client.put(f"/api/orders/{new_order['id']}", json=new_order)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_order = response.get_json()
         self.assertEqual(updated_order["address"], "Tandon Brooklyn downtown")
@@ -166,7 +166,7 @@ class TestRestApiServer(TestCase):
 
         # update the order
         new_order = response.get_json()
-        response = self.client.put(f"api/orders/1000", json=new_order)
+        response = self.client.put(f"/api/orders/1000", json=new_order)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
@@ -175,7 +175,7 @@ class TestRestApiServer(TestCase):
     def test_delete_order(self):
         """It should Delete a order"""
         test_order = self._create_orders(1)[0]
-        response = self.client.delete(f"api/orders/{test_order.id}")
+        response = self.client.delete(f"/api/orders/{test_order.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
@@ -232,7 +232,7 @@ class TestRestApiServer(TestCase):
 
         # fetch it back
         response = self.client.get(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -309,7 +309,7 @@ class TestRestApiServer(TestCase):
 
         # send the update back
         response = self.client.put(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             json=data,
             content_type="application/json",
         )
@@ -317,7 +317,7 @@ class TestRestApiServer(TestCase):
 
         # retrieve it back
         response = self.client.get(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -355,7 +355,7 @@ class TestRestApiServer(TestCase):
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
-            f"{BASE_URL}/{test_order.id}/items",
+            f"/orders/{test_order.id}/items",
             json=item.serialize(),
             content_type="application/json",
         )
@@ -366,20 +366,20 @@ class TestRestApiServer(TestCase):
 
         # send delete request
         response = self.client.delete(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # retrieve it back and make sure item is not there
         response = self.client.get(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_order_with_item(self):
-        """It should Delete Order and its items"""
+        """It should delete Order and its items"""
         test_order = self._create_orders(1)[0]
         item = ItemFactory()
         response = self.client.post(
@@ -394,14 +394,14 @@ class TestRestApiServer(TestCase):
 
         # delete item
         response = self.client.delete(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # check item is not there
         response = self.client.get(
-            f"{BASE_URL}/{test_order.id}/items/{item_id}",
+            f"/api/orders/{test_order.id}/items/{item_id}",
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -465,7 +465,7 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_get_items_price_min_max(self):
-        """It should Get all Items of an Order that are between max and min price"""
+        """It should get all Items of an Order that are between max and min price"""
         test_order = self._create_orders(5)
         item = ItemFactory()
         response = self.client.post(
@@ -482,7 +482,7 @@ class TestRestApiServer(TestCase):
 
         # send the update back
         response = self.client.put(
-            f"{BASE_URL}/{test_order[0].id}/items/{item_id}",
+            f"/api/orders/{test_order[0].id}/items/{item_id}",
             json=data,
             content_type="application/json",
         )
@@ -502,7 +502,7 @@ class TestRestApiServer(TestCase):
 
         # send the update backIt should find
         response = self.client.put(
-            f"{BASE_URL}/{test_order[1].id}/items/{item_id}",
+            f"/api/orders/{test_order[1].id}/items/{item_id}",
             json=data,
             content_type="application/json",
         )
