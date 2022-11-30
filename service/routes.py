@@ -9,7 +9,7 @@ its customer id. A good action for the order API is to be able to cancel an orde
 
 """
 
-from flask import abort, jsonify, request, render_template
+from flask import abort, request, render_template
 from service.models import Item, Order
 from flask_restx import Resource, fields
 
