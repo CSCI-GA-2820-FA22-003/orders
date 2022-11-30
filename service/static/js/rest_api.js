@@ -106,4 +106,30 @@ $(function () {
         });
 
     });
+
+    // Delete an Order
+    $("#delete-btn").click(function () {
+
+        var order_id = $("#delete_order_id").val();
+
+        var data = {
+            "id": order_id
+        };
+
+        var ajax = $.ajax({
+            type: "DELETE",
+            url: "/api/orders/" + order_id,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function (res) {
+            flash_message("Success ")
+            update_form_data(JSON.stringify(res))
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
 })
