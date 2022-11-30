@@ -83,6 +83,7 @@
   <button class="tablinks" onclick="openTab(event, 'delete')">Delete an order</button> 
   <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item')">List all items of an Order</button>
+  <button class="tablinks" onclick="openTab(event, 'update-item')">Update an Item</button>
 </div>
 
 <div id="create" class="tabcontent">
@@ -351,6 +352,83 @@
                   <br>
               </div>
           </div>
+      </div>
+    </div>
+</div>
+
+<div id="update-item" class="tabcontent">
+    <h3>Update an item</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+          
+          <div class="form-horizontal">
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_id">Item ID:</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control" id="update_item_id" placeholder="Enter ID of Item">
+                  </div>
+          </div> 
+           
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="order_id_update">Order ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="order_id_update" placeholder="Enter Order Name">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_product_id">Product ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_product_id" placeholder="Enter Item's Product ID">
+                  </div>
+              </div>
+          </div>
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_price">Price:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_price" placeholder="Enter Item's Price">
+                  </div>
+              </div>
+          </div>
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_quantity">Quantity:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_quantity" placeholder="Enter Item's Quantity">
+                  </div>
+              </div>
+          </div> 
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_status">Status:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_status"
+                          placeholder="Enter Item's Status">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="update-item-btn">Update Item</button> 
+              </div>
+          </div>
+  
+       </div>
       </div>
     </div>
 </div>

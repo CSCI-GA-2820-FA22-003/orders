@@ -208,4 +208,40 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
     });
+
+    // Update an Item
+    $("#update-item-btn").click(function () {
+
+        var item_id = $("#update_item_id").val();
+        var order_id = $("#order_id_update").val();
+        var product_id = $("#update_product_id").val(); 
+        var price = $("#update_item_price").val(); 
+        var quantity = $("#update_item_quantity").val(); 
+        var status = $("#update_item_status").val(); 
+
+        var data = {
+            "id": item_id,
+            "order_id": order_id,
+            "product_id": product_id, 
+            "price": price,
+            "quantity": quantity,
+            "status": status
+        };
+
+        var ajax = $.ajax({
+            type: "PUT",
+            url: "/api/orders/" + order_id + "/items/" + item_id,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function (res) {
+            flash_message("Success ")
+            update_form_data(JSON.stringify(res))
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
 })
