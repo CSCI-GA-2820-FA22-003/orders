@@ -9,7 +9,7 @@ its customer id. A good action for the order API is to be able to cancel an orde
 
 """
 
-from flask import abort, request, render_template
+from flask import abort, request, render_template, make_response, jsonify
 from service.models import Item, Order
 from flask_restx import Resource, fields
 
@@ -57,6 +57,15 @@ def index():
     """Root URL response"""
     app.logger.info("Request for Root URL")
     return render_template("index.html")
+
+
+######################################################################
+# GET HEALTH CHECK
+######################################################################
+@app.route("/health")
+def healthcheck():
+    """Let them know our heart is still beating"""
+    return make_response(jsonify(status=200, message="OK"), status.HTTP_200_OK)
 
 
 ######################################################################
