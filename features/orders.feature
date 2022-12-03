@@ -18,7 +18,16 @@ Scenario: The server is running
 
 Scenario: Create an Order
     When I visit the "Home Page"
-    And I set the "Name" to "Order1"
-    And I set the "Addr" to "Addr1"
+    And I set the "Order Name" to "Order1"
+    And I set the "Order Addr" to "Addr1"
     And I press the "Create" button
+    Then I should see the message "Success"
+
+Scenario: Update an Order
+    When I visit the "Home Page"
+    And I press the "Update-Tab" button
+    And I set the "Update Order ID" to "<base> + 1"
+    And I set the "Update Order Name" to "Order11"
+    And I set the "Update Order Addr" to "Addr11"
+    And I press the "Update" button
     Then I should see the message "Success"

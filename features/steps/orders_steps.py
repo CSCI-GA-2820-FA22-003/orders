@@ -38,7 +38,7 @@ def step_impl(context):
     for pet in context.resp.json():
         context.resp = requests.delete(f"{rest_endpoint}/{pet['id']}")
         expect(context.resp.status_code).to_equal(204)
-
+        context.id_base = pet['id']
     # load the database with new pets
     for row in context.table:
         payload = {

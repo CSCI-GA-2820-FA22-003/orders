@@ -54,9 +54,11 @@ def step_impl(context, text_string):
 
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = element_name.lower().replace(' ', '_')
     element = context.driver.find_element_by_id(element_id)
     element.clear()
+    if text_string[:9] == '<base> + ':
+        text_string = str(int(text_string[9:]) + context.id_base)
     element.send_keys(text_string)
 
 @when('I select "{text}" in the "{element_name}" dropdown')
