@@ -154,6 +154,11 @@ class OrderResource(Resource):
         This endpoint will update an order based the body that is posted
         """
         app.logger.info('Request to Update an order with id [%s]', order_id)
+        try:
+            int(order_id)
+        except ValueError:
+            abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
+
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
