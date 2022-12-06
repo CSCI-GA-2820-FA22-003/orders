@@ -79,6 +79,24 @@ def step_impl(context, element_name):
     element = context.driver.find_element_by_id(element_id)
     expect(element.get_attribute('value')).to_be(u'')
 
+@then('I should see "{text}" in the row includes "{content}" of "{table_name}" table')
+def step_impl(context, text, content, table_name):
+    element_id = table_name.lower().replace(' ', '_') + "_results"
+    # element = context.driver.find_element_by_id(element_id)
+    # # select first table element
+    # row = element.find_elements_by_xpath("./*")[1 + int(row_idx)]
+    # col = row.find_elements_by_xpath("./*")[0]
+    # print(col.text)
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.XPATH, 
+            "//div[@id='{}']/tr/td[contains(., '{}')][1]/..".format(element_id, content)
+            ),
+            text
+        )
+    )
+    expect(found).to_be(True)
+
 ##################################################################
 # These two function simulate copy and paste
 ##################################################################

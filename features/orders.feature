@@ -31,3 +31,12 @@ Scenario: Update an Order
     And I set the "Update Order Addr" to "Addr11"
     And I press the "Update" button
     Then I should see the message "Success"
+
+Scenario: List All Order
+    When I visit the "Home Page"
+    And I press the "Listall-Tab" button
+    And I press the "Listall" button
+    Then I should see "addr1" in the row includes "order1" of "List" table
+    Then I should see "addr2" in the row includes "order2" of "List" table
+    Then I should see "addr3" in the row includes "order3" of "List" table
+    Then I should see "addr4" in the row includes "order4" of "List" table
