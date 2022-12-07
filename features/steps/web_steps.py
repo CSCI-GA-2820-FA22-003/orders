@@ -26,6 +26,7 @@ For information on Waiting until elements are present in the HTML see:
 """
 import logging
 from behave import when, then
+import json
 from compare import expect, ensure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
@@ -79,6 +80,20 @@ def step_impl(context, element_name):
     element = context.driver.find_element_by_id(element_id)
     expect(element.get_attribute('value')).to_be(u'')
 
+@then('I should see "{text}" in the row includes "{content}" of "{table_name}" table')
+def step_impl(context, text, content, table_name):
+    element_id = table_name.lower().replace(' ', '_') + "_results"
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.XPATH, 
+            "//div[@id='{}']/tr/td[contains(., '{}')][1]/..".format(element_id, content)
+            ),
+            text
+        )
+    )
+    expect(found).to_be(True)
+
+
 ##################################################################
 # These two function simulate copy and paste
 ##################################################################
@@ -91,9 +106,23 @@ def step_impl(context, element_name):
     context.clipboard = element.get_attribute('value')
     logging.info('Clipboard contains: %s', context.clipboard)
 
+@when('I copy the item ID from flash message')
+def step_impl(context):
+    ret = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'flash_message'),
+            "Success"
+        )
+    )
+    expect(ret).to_be(True)
+    element = context.driver.find_element_by_id('flash_message')
+    text = element.get_attribute('textContent')
+    context.clipboard = str(json.loads(text.replace("Success", ""))["id"])
+    logging.info('Clipboard contains: %s', context.clipboard)
+
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
-    element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
+    element_id = element_name.lower().replace(' ', '_')
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
