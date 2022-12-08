@@ -49,7 +49,6 @@ $(function () {
         var address = $("#update_order_addr").val(); 
 
         var data = {
-            "id": order_id,
             "name": name,
             "address": address, 
         };
@@ -220,8 +219,6 @@ $(function () {
         var status = $("#update_item_status").val(); 
 
         var data = {
-            "id": item_id,
-            "order_id": order_id,
             "product_id": product_id, 
             "price": price,
             "quantity": quantity,
