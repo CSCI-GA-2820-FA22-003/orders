@@ -40,14 +40,14 @@ class Item(db.Model):
     #         Since it is redundant with serialize method
 
     def __repr__(self):
-        return f"<Item id=[{self.id}]\t product_id=[{self.product_id}]\t \
+        return f"<product_id=[{self.product_id}]\t \
             price=[{self.price}]\t quantity=[{self.quantity}]\t order_id=[{self.order_id}]\t status=[{self.status}]>"
 
     def create(self):
         """
         Creates an Item to the database
         """
-        logger.info("Creating %d", self.id)
+        logger.info("Creating %d", self.product_id)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
@@ -80,11 +80,9 @@ class Item(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.id = data["id"]
             self.product_id = data["product_id"]
             self.price = data["price"]
             self.quantity = data["quantity"]
-            self.order_id = data["order_id"]
             self.status = data["status"]
         except KeyError as error:
             raise DataValidationError(
@@ -167,7 +165,7 @@ class Order(db.Model):
     items = db.relationship("Item", backref="order", passive_deletes=True)
 
     def __repr__(self):
-        return f"<id=[{self.id}]\t name=[{self.name}]\t \
+        return f"<name=[{self.name}]\t \
             address=[{self.address}]\t date_created=[{self.date_created}]\t items=[]>"
 
     def create(self):

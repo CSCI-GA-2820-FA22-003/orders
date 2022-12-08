@@ -58,7 +58,6 @@ Scenario: Delete An Non-existent Order
 Scenario: Create An Item
     When I visit the "Home Page"
     And I press the "Create-Item-Tab" button
-    And I set the "Item ID" to "1"
     And I set the "Item Order ID" to "<base> + 1"
     And I set the "Item Product ID" to "233"
     And I set the "Item Price" to "100"
@@ -70,7 +69,6 @@ Scenario: Create An Item
 Scenario: List All Item Of And Order
     When I visit the "Home Page"
     And I press the "Create-Item-Tab" button
-    And I set the "Item ID" to "2"
     And I set the "Item Order ID" to "<base> + 1"
     And I set the "Item Product ID" to "233"
     And I set the "Item Price" to "100"
@@ -85,7 +83,6 @@ Scenario: List All Item Of And Order
 Scenario: Update An Item
     When I visit the "Home Page"
     And I press the "Create-Item-Tab" button
-    And I set the "Item ID" to "1"
     And I set the "Item Order ID" to "<base> + 1"
     And I set the "Item Product ID" to "233"
     And I set the "Item Price" to "100"
@@ -106,7 +103,6 @@ Scenario: Update An Item
 Scenario: Delete An Item
     When I visit the "Home Page"
     And I press the "Create-Item-Tab" button
-    And I set the "Item ID" to "1"
     And I set the "Item Order ID" to "<base> + 1"
     And I set the "Item Product ID" to "233"
     And I set the "Item Price" to "100"
