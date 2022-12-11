@@ -208,10 +208,10 @@ $(function () {
         });
     });
 
-    // List all Items of an Order within the specified price range
+    // List all Items within the specified price range
     $("#listall-item-pricerange-btn").click(function () {
 
-        var order_id = $("#order_id_items").val();
+        //var order_id = $("#order_id_items").val();
         var min_price = $("#min_price").val();
         var max_price = $("#max_price").val();
 
