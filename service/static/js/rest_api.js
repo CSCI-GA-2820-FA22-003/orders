@@ -216,14 +216,15 @@ $(function () {
         var max_price = $("#max_price").val();
 
         var ajax = $.ajax({
-            type: "GET",
-            url: "/api/orders/prices",
-            data : { min_price : min_price, max_price : max_price },
+            type: "POST",
+            url: "/api/orders_prices",
+            contentType: "application/json",
+            data : JSON.stringify({ min_price : min_price, max_price : max_price }),
         })
 
         ajax.done(function (res) {
-            $("#list_item_results").empty();
-            $("#list_item_results").append('<table class="table-striped">');
+            $("#list_item_pirce_results").empty();
+            $("#list_item_pirce_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th>Item ID</th>'
             header += '<th>Order_id</th>'
@@ -231,15 +232,20 @@ $(function () {
             header += '<th>Price</th>'
             header += '<th>Quantity</th>'
             header += '<th>Status</th></tr>'
-            $("#list_item_results").append(header); 
+            $("#list_item_pirce_results").append(header); 
             for (var i = 0; i < res.length; i++) {
-                var item = res[i];
-                var row = "<tr><td>" + item.id + "</td><td>" + item.order_id + "</td><td>" 
-                          + item.product_id + "</td><td>" + item.price + "</td><td>" 
-                          + item.quantity + "</td><td>" + item.status + "</td></tr>";
-                $("#list_item_results").append(row);
+                var order = res[i];
+                for (var j = 0; j < order.items.length; j++)
+                {
+                    var item = order.items[j];
+                    console.log(item);
+                    var row = "<tr><td>" + item.id + "</td><td>" + item.order_id + "</td><td>" 
+                    + item.product_id + "</td><td>" + item.price + "</td><td>" 
+                    + item.quantity + "</td><td>" + item.status + "</td></tr>";
+                    $("#list_item_pirce_results").append(row);
+                }
             }
-            $("#list_item_results").append('</table>');
+            $("#list_item_pirce_results").append('</table>');
 
             flash_message("Success")
         });

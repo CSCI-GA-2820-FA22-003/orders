@@ -120,7 +120,7 @@ class OrderResource(Resource):
     """
     OrderResource class
     Allows the manipulation of an single order
-    GET /order{id} - Returns an Order with the id
+    GET /order/{id} - Returns an Order with the id
     """
 
     # ------------------------------------------------------------------
@@ -345,9 +345,9 @@ class ItemResource(Resource):
 
 
 ######################################################################
-#  PATH: /orders/date/<date_iso>
+#  PATH: /orders_date/<date_iso>
 ######################################################################
-@api.route('/orders/date/<date_iso>', strict_slashes=False)
+@api.route('/orders_date/<date_iso>', strict_slashes=False)
 @api.param('date_iso', 'The date in ISO format')
 class DateQuery(Resource):
     """ Handles all interactions with dates"""
@@ -375,9 +375,9 @@ class DateQuery(Resource):
 
 
 ######################################################################
-#  PATH: /orders/prices
+#  PATH: /orders_prices
 ######################################################################
-@api.route('/orders/prices', strict_slashes=False)
+@api.route('/orders_prices', strict_slashes=False)
 class PriceQuery(Resource):
     """ Handles all interactions with prices"""
     # ------------------------------------------------------------------
