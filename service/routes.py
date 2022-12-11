@@ -379,9 +379,9 @@ class DateQuery(Resource):
 ######################################################################
 @api.route('/orders/prices', strict_slashes=False)
 class PriceQuery(Resource):
-    """ Handles all interactions with dates"""
+    """ Handles all interactions with prices"""
     # ------------------------------------------------------------------
-    # IST ALL ITEMS IN ORDER IN PRICE RANGE
+    # LIST ALL ITEMS IN ORDER IN PRICE RANGE
     # ------------------------------------------------------------------
     @api.doc('list_all_items_prices')
     @api.marshal_list_with(order_model)
