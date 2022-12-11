@@ -3,7 +3,9 @@
 <head>
     <title>Orders Resource</title>
     <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/cerulean_bootstrap.min.css">
     <style>
     * {box-sizing: border-box}
     body {font-family: "Lato", sans-serif;}
@@ -69,8 +71,10 @@
 </head>
 <body>
 
-<h2>ORDERS RESOURCE</h2>
-<p>Create, Read, Update, or Delete Orders and Items</p>
+<div class="page-header">
+    <h2>ORDERS RESOURCE</h2>
+    <p>Create, Read, Update, or Delete Orders and Items</p>
+</div>
 
 <!-- Flash Message -->
 <div class="table-responsive">
@@ -89,6 +93,7 @@
   <button class="tablinks" onclick="openTab(event, 'delete')" id="delete-tab-btn">Delete an order</button> 
   <button class="tablinks" onclick="openTab(event, 'create-item')" id="create-item-tab-btn">Create an item</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item')" id="listall-item-tab-btn">List all items of an Order</button>
+  <button class="tablinks" onclick="openTab(event, 'listall-item_pricerange')" id="listall-item_pricerange-tab-btn">List all items within the price range</button>
   <button class="tablinks" onclick="openTab(event, 'update-item')" id="update-item-tab-btn">Update an Item</button>
   <button class="tablinks" onclick="openTab(event, 'delete-item')" id="delete-item-tab-btn">Delete an Item</button>
 </div>
@@ -324,6 +329,57 @@
           
               <br/>
               <div class="table-responsive col-md-12" id="list_item_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">OrderID</th>
+                              <th class="col-md-4">ProductID</th>
+                              <th class="col-md-3">Price</th>
+                              <th class="col-md-3">Quantity</th>
+                              <th class="col-md-4">Status</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+<div id="listall-item_pricerange" class="tabcontent">
+    <h3>List all items within Price Range</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <!--
+                <label class="control-label col-sm-2" for="order_id_items">Order ID:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="order_id_items" placeholder="Enter ID of Order">
+                </div>
+                 -->
+
+                <label class="control-label col-sm-2" for="min_price">Min Price:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="min_price" placeholder="Enter minimum price for the item">
+                </div>
+                <label class="control-label col-sm-2" for="max_price">Max Price:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="max_price" placeholder="Enter maximum price for the item">
+                </div>
+            </div>
+        </div> 
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="listall-item-pricerange-btn"> List all items within the price range</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_item_pirce_results">
                   <table class="table-striped">
                       <thead>
                           <tr>
