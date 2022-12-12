@@ -92,6 +92,7 @@
   <button class="tablinks" onclick="openTab(event, 'listall')" id="listall-tab-btn">List all orders</button> 
   <button class="tablinks" onclick="openTab(event, 'list-order-details')" id="order-details-btn">List order details</button>
   <button class="tablinks" onclick="openTab(event, 'delete')" id="delete-tab-btn">Delete an order</button> 
+  <button class="tablinks" onclick="openTab(event, 'listall-date')" id="listall-date-tab-btn">List all orders based on date</button>
   <button class="tablinks" onclick="openTab(event, 'create-item')" id="create-item-tab-btn">Create an item</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item')" id="listall-item-tab-btn">List all items of an Order</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item_pricerange')" id="listall-item_pricerange-tab-btn">List all items within the price range</button>
@@ -295,6 +296,44 @@
    </div>
 </div>
 
+<div id="listall-date" class="tabcontent">
+    <h3>List all orders based on Date</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="order_date">Order Date:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="order_date" placeholder="Enter Date">
+                </div>
+            </div>
+        </div> 
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="listall-date-btn"> List all Orders placed on the given date</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_item_bydate_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-4">Order ID</th>
+                              <th class="col-md-4">Order Name</th>
+                              <th class="col-md-3">Address</th>
+                              <th class="col-md-3">Date_created</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
 <div id="create-item" class="tabcontent">
     <h3>Create an item</h3> 
     <div class="container"> 
@@ -437,7 +476,7 @@
               </div>
           
               <br/>
-              <div class="table-responsive col-md-12" id="list_item_pirce_results">
+              <div class="table-responsive col-md-12" id="list_item_price_results">
                   <table class="table-striped">
                       <thead>
                           <tr>

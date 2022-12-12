@@ -277,8 +277,8 @@ $(function () {
         })
 
         ajax.done(function (res) {
-            $("#list_item_pirce_results").empty();
-            $("#list_item_pirce_results").append('<table class="table-striped">');
+            $("#list_item_price_results").empty();
+            $("#list_item_price_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th>Item ID</th>'
             header += '<th>Order_id</th>'
@@ -286,7 +286,7 @@ $(function () {
             header += '<th>Price</th>'
             header += '<th>Quantity</th>'
             header += '<th>Status</th></tr>'
-            $("#list_item_pirce_results").append(header); 
+            $("#list_item_price_results").append(header); 
             for (var i = 0; i < res.length; i++) {
                 var order = res[i];
                 for (var j = 0; j < order.items.length; j++)
@@ -294,12 +294,49 @@ $(function () {
                     var item = order.items[j];
                     console.log(item);
                     var row = "<tr><td>" + item.id + "</td><td>" + item.order_id + "</td><td>" 
-                    + item.product_id + "</td><td>" + item.price + "</td><td>" 
-                    + item.quantity + "</td><td>" + item.status + "</td></tr>";
-                    $("#list_item_pirce_results").append(row);
+                          + item.product_id + "</td><td>" + item.price + "</td><td>" 
+                          + item.quantity + "</td><td>" + item.status + "</td></tr>";
+                    $("#list_item_price_results").append(row);
                 }
             }
-            $("#list_item_pirce_results").append('</table>');
+            $("#list_item_price_results").append('</table>');
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
+
+    // List all orders placed on the specified date
+    $("#listall-date-btn").click(function () {
+        var dt = $("#order_date").val();
+        var date = dt;
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/api/orders_date/" + date,
+            data : '',
+        })
+
+        ajax.done(function (res) {
+            $("#list_item_bydate_results").empty();
+            $("#list_item_bydate_results").append('<table class="table-striped">');
+            var header = '<tr>'
+            header += '<th>Order ID</th>'
+            header += '<th>Order Name</th>'
+            header += '<th>Address</th>'
+            header += '<th>Date_created</th>'
+
+            $("#list_item_bydate_results").append(header); 
+            for (var i = 0; i < res.length; i++) {
+                var order = res[i];
+                var row = "<tr><td>" + order.id + "</td><td>" + order.name + "</td><td>" 
+                        + order.address + "</td><td>" + order.date_created + "</td></tr>";
+                $("#list_item_bydate_results").append(row);              
+            }
+            $("#list_item_bydate_results").append('</table>');
 
             flash_message("Success")
         });
