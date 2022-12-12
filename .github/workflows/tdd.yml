@@ -1,4 +1,4 @@
-name: TestCasesTDD
+name: TDD Tests
 on:
   push:
     branches:    

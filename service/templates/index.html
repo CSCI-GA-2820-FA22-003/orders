@@ -3,7 +3,9 @@
 <head>
     <title>Orders Resource</title>
     <meta charset="utf-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/cerulean_bootstrap.min.css">
     <style>
     * {box-sizing: border-box}
     body {font-family: "Lato", sans-serif;}
@@ -53,6 +55,12 @@
     height: 300px;
     overflow-y: auto;
     }
+
+    table, th, td, tr {
+        border: 1px solid;
+        width: 10%;
+        text-align: center;
+    }
     </style>
     <link rel="stylesheet" href="">
     
@@ -63,8 +71,10 @@
 </head>
 <body>
 
-<h2>ORDERS RESOURCE</h2>
-<p>Create, Read, Update, or Delete Orders and Items</p>
+<div class="page-header">
+    <h2>ORDERS RESOURCE</h2>
+    <p>Create, Read, Update, or Delete Orders and Items</p>
+</div>
 
 <!-- Flash Message -->
 <div class="table-responsive">
@@ -78,11 +88,16 @@
 
 <div class="tab">
   <button class="tablinks" onclick="openTab(event, 'create')" id="defaultOpen">Create an order</button>
-  <button class="tablinks" onclick="openTab(event, 'update')" >Update an order</button>
-  <button class="tablinks" onclick="openTab(event, 'listall')">List all orders</button> 
-  <button class="tablinks" onclick="openTab(event, 'delete')">Delete an order</button> 
-  <button class="tablinks" onclick="openTab(event, 'create-item')">Create an item</button>
-  <button class="tablinks" onclick="openTab(event, 'listall-item')">List all items of an Order</button>
+  <button class="tablinks" onclick="openTab(event, 'update')" id="update-tab-btn">Update an order</button>
+  <button class="tablinks" onclick="openTab(event, 'listall')" id="listall-tab-btn">List all orders</button> 
+  <button class="tablinks" onclick="openTab(event, 'list-order-details')" id="order-details-btn">List order details</button>
+  <button class="tablinks" onclick="openTab(event, 'delete')" id="delete-tab-btn">Delete an order</button> 
+  <button class="tablinks" onclick="openTab(event, 'listall-date')" id="listall-date-tab-btn">List all orders based on date</button>
+  <button class="tablinks" onclick="openTab(event, 'create-item')" id="create-item-tab-btn">Create an item</button>
+  <button class="tablinks" onclick="openTab(event, 'listall-item')" id="listall-item-tab-btn">List all items of an Order</button>
+  <button class="tablinks" onclick="openTab(event, 'listall-item_pricerange')" id="listall-item_pricerange-tab-btn">List all items within the price range</button>
+  <button class="tablinks" onclick="openTab(event, 'update-item')" id="update-item-tab-btn">Update an Item</button>
+  <button class="tablinks" onclick="openTab(event, 'delete-item')" id="delete-item-tab-btn">Delete an Item</button>
 </div>
 
 <div id="create" class="tabcontent">
@@ -91,16 +106,6 @@
 
     <div class="col-md-12" id="form_data"> 
         
-        <div class="form-horizontal">
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="order_id">Order ID:</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" id="order_id" placeholder="Enter ID of Order">
-                </div>
-            </div>
-        </div> 
-         
-        <br/>
         <div class="form-horizontal"> 
             <div class="form-group">
                 <label class="control-label col-sm-2" for="order_name">Order Name:</label>
@@ -211,6 +216,63 @@
   </div>
 </div>
 
+<div id="list-order-details" class="tabcontent">
+    <h3>List order details</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal"> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="order_details_id">Order ID:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="order_details_id"
+                        placeholder="Enter Order ID">
+                </div>
+            </div>
+        </div>
+         
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="list-order-details-btn">List Order Details</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_order_details_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">Order Name</th>
+                              <th class="col-md-4">Address</th>
+                              <th class="col-md-3">Date of Creation</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+              <br/>
+              <div class="table-responsive col-md-12" id="list_order_item_results">
+                <table class="table-striped">
+                    <thead>
+                        <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">OrderID</th>
+                              <th class="col-md-4">ProductID</th>
+                              <th class="col-md-3">Price</th>
+                              <th class="col-md-3">Quantity</th>
+                              <th class="col-md-4">Status</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br>
+            </div>
+          </div>
+  
+      </div>
+    </div>
+  </div>
+
 <div id="delete" class="tabcontent">
     <h3>Delete an order</h3> 
     <div class="container"> 
@@ -234,22 +296,50 @@
    </div>
 </div>
 
+<div id="listall-date" class="tabcontent">
+    <h3>List all orders based on Date</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="order_date">Order Date:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="order_date" placeholder="Enter Date">
+                </div>
+            </div>
+        </div> 
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="listall-date-btn"> List all Orders placed on the given date</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_item_bydate_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-4">Order ID</th>
+                              <th class="col-md-4">Order Name</th>
+                              <th class="col-md-3">Address</th>
+                              <th class="col-md-3">Date_created</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
 <div id="create-item" class="tabcontent">
     <h3>Create an item</h3> 
     <div class="container"> 
   
       <div class="col-md-12" id="form_data"> 
-          
-          <div class="form-horizontal">
-              <div class="form-group">
-                  <label class="control-label col-sm-2" for="item_id">Item ID:</label>
-                  <div class="col-sm-6">
-                      <input type="text" class="form-control" id="item_id" placeholder="Enter ID of Item">
-                  </div>
-              </div>
-          </div> 
-
-          <br/>
+        
           <div class="form-horizontal"> 
               <div class="form-group">
                   <label class="control-label col-sm-2" for="item_order_id">Order ID:</label>
@@ -351,6 +441,170 @@
                   <br>
               </div>
           </div>
+      </div>
+    </div>
+</div>
+
+<div id="listall-item_pricerange" class="tabcontent">
+    <h3>List all items within Price Range</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <!--
+                <label class="control-label col-sm-2" for="order_id_items">Order ID:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="order_id_items" placeholder="Enter ID of Order">
+                </div>
+                 -->
+
+                <label class="control-label col-sm-2" for="min_price">Min Price:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="min_price" placeholder="Enter minimum price for the item">
+                </div>
+                <label class="control-label col-sm-2" for="max_price">Max Price:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="max_price" placeholder="Enter maximum price for the item">
+                </div>
+            </div>
+        </div> 
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="listall-item-pricerange-btn"> List all items within the price range</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_item_price_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">OrderID</th>
+                              <th class="col-md-4">ProductID</th>
+                              <th class="col-md-3">Price</th>
+                              <th class="col-md-3">Quantity</th>
+                              <th class="col-md-4">Status</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+<div id="update-item" class="tabcontent">
+    <h3>Update an item</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+          
+          <div class="form-horizontal">
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_id">Item ID:</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control" id="update_item_id" placeholder="Enter ID of Item">
+                  </div>
+          </div> 
+           
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="order_id_update">Order ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="order_id_update" placeholder="Enter Order Name">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_product_id">Product ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_product_id" placeholder="Enter Item's Product ID">
+                  </div>
+              </div>
+          </div>
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_price">Price:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_price" placeholder="Enter Item's Price">
+                  </div>
+              </div>
+          </div>
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_quantity">Quantity:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_quantity" placeholder="Enter Item's Quantity">
+                  </div>
+              </div>
+          </div> 
+
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="update_item_status">Status:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="update_item_status"
+                          placeholder="Enter Item's Status">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="update-item-btn">Update Item</button> 
+              </div>
+          </div>
+  
+       </div>
+      </div>
+    </div>
+</div>
+
+<div id="delete-item" class="tabcontent">
+    <h3>Delete an item</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+          
+          <div class="form-horizontal">
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="order_id_delete">Order ID:</label>
+                  <div class="col-sm-6">
+                      <input type="text" class="form-control" id="order_id_delete" placeholder="Enter ID of Order">
+                  </div>
+          </div> 
+           
+          <br/>
+          <div class="form-horizontal"> 
+              <div class="form-group">
+                  <label class="control-label col-sm-2" for="item_id_delete">Item ID:</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="item_id_delete" placeholder="Enter Item ID">
+                  </div>
+              </div>
+          </div> 
+  
+          <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="delete-item-btn">Delete Item</button> 
+              </div>
+          </div>
+  
+       </div>
       </div>
     </div>
 </div>

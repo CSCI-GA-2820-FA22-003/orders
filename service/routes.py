@@ -9,7 +9,7 @@ its customer id. A good action for the order API is to be able to cancel an orde
 
 """
 
-from flask import abort, request, render_template
+from flask import abort, request, render_template, make_response, jsonify
 from service.models import Item, Order
 from flask_restx import Resource, fields
 
@@ -57,6 +57,15 @@ def index():
     """Root URL response"""
     app.logger.info("Request for Root URL")
     return render_template("index.html")
+
+
+######################################################################
+# GET HEALTH CHECK
+######################################################################
+@app.route("/health")
+def healthcheck():
+    """Let them know our heart is still beating"""
+    return make_response(jsonify(status=200, message="OK"), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -111,7 +120,7 @@ class OrderResource(Resource):
     """
     OrderResource class
     Allows the manipulation of an single order
-    GET /order{id} - Returns an Order with the id
+    GET /order/{id} - Returns an Order with the id
     """
 
     # ------------------------------------------------------------------
@@ -145,6 +154,11 @@ class OrderResource(Resource):
         This endpoint will update an order based the body that is posted
         """
         app.logger.info('Request to Update an order with id [%s]', order_id)
+        try:
+            int(order_id)
+        except ValueError:
+            abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
+
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
@@ -331,9 +345,9 @@ class ItemResource(Resource):
 
 
 ######################################################################
-#  PATH: /orders/date/<date_iso>
+#  PATH: /orders_date/<date_iso>
 ######################################################################
-@api.route('/orders/date/<date_iso>', strict_slashes=False)
+@api.route('/orders_date/<date_iso>', strict_slashes=False)
 @api.param('date_iso', 'The date in ISO format')
 class DateQuery(Resource):
     """ Handles all interactions with dates"""
@@ -361,13 +375,13 @@ class DateQuery(Resource):
 
 
 ######################################################################
-#  PATH: /orders/prices
+#  PATH: /orders_prices
 ######################################################################
-@api.route('/orders/prices', strict_slashes=False)
+@api.route('/orders_prices', strict_slashes=False)
 class PriceQuery(Resource):
-    """ Handles all interactions with dates"""
+    """ Handles all interactions with prices"""
     # ------------------------------------------------------------------
-    # IST ALL ITEMS IN ORDER IN PRICE RANGE
+    # LIST ALL ITEMS IN ORDER IN PRICE RANGE
     # ------------------------------------------------------------------
     @api.doc('list_all_items_prices')
     @api.marshal_list_with(order_model)

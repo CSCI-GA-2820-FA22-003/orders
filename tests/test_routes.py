@@ -102,7 +102,7 @@ class TestRestApiServer(TestCase):
         data = response.get_json()
         self.assertEqual(data["name"], test_order.name)
 
-        response = self.client.get(f"api/orders/date/{test_order.date_created}")
+        response = self.client.get(f"api/orders_date/{test_order.date_created}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 1)
@@ -511,7 +511,7 @@ class TestRestApiServer(TestCase):
 
         # retrieve it back
         response = self.client.post(
-            f"/api/orders/prices",
+            f"/api/orders_prices",
             json={'max_price': 5.0, 'min_price': 3.0},
             content_type="application/json",
         )
