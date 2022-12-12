@@ -311,13 +311,11 @@ $(function () {
 
     // List all orders placed on the specified date
     $("#listall-date-btn").click(function () {
-
-        //var order_id = $("#order_id_items").val();
         var dt = $("#order_date").val();
-        var date = new Date(dt).toISOString();
+        var date = dt;
 
         var ajax = $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/api/orders_date/" + date,
             data : '',
         })
@@ -326,24 +324,17 @@ $(function () {
             $("#list_item_bydate_results").empty();
             $("#list_item_bydate_results").append('<table class="table-striped">');
             var header = '<tr>'
-            header += '<th>Item ID</th>'
-            header += '<th>Order_id</th>'
-            header += '<th>Product_id</th>'
-            header += '<th>Price</th>'
-            header += '<th>Quantity</th>'
-            header += '<th>Status</th></tr>'
+            header += '<th>Order ID</th>'
+            header += '<th>Order Name</th>'
+            header += '<th>Address</th>'
+            header += '<th>Date_created</th>'
+
             $("#list_item_bydate_results").append(header); 
             for (var i = 0; i < res.length; i++) {
                 var order = res[i];
-                for (var j = 0; j < order.items.length; j++)
-                {
-                    var item = order.items[j];
-                    console.log(item);
-                    var row = "<tr><td>" + item.id + "</td><td>" + item.order_id + "</td><td>" 
-                          + item.product_id + "</td><td>" + item.price + "</td><td>" 
-                          + item.quantity + "</td><td>" + item.status + "</td></tr>";
-                    $("#list_item_bydate_results").append(row);
-                }                 
+                var row = "<tr><td>" + order.id + "</td><td>" + order.name + "</td><td>" 
+                        + order.address + "</td><td>" + order.date_created + "</td></tr>";
+                $("#list_item_bydate_results").append(row);              
             }
             $("#list_item_bydate_results").append('</table>');
 
