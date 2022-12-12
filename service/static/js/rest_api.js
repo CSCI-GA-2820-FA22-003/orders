@@ -1,5 +1,3 @@
-list_item_bydate_results
-
 $(function () {
 
     // Updates the flash message area
