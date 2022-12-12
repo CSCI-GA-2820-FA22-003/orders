@@ -313,11 +313,12 @@ $(function () {
     $("#listall-date-btn").click(function () {
 
         //var order_id = $("#order_id_items").val();
-        var date = $("#order_date").val().toISOString();
+        var dt = $("#order_date").val();
+        var date = new Date(dt).toISOString();
 
         var ajax = $.ajax({
             type: "POST",
-            url: "/api/orders_date" + date,
+            url: "/api/orders_date/" + date,
             data : '',
         })
 
