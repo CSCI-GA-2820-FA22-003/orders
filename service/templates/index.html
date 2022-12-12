@@ -90,6 +90,7 @@
   <button class="tablinks" onclick="openTab(event, 'create')" id="defaultOpen">Create an order</button>
   <button class="tablinks" onclick="openTab(event, 'update')" id="update-tab-btn">Update an order</button>
   <button class="tablinks" onclick="openTab(event, 'listall')" id="listall-tab-btn">List all orders</button> 
+  <button class="tablinks" onclick="openTab(event, 'list-order-details')" id="order-details-btn">List order details</button>
   <button class="tablinks" onclick="openTab(event, 'delete')" id="delete-tab-btn">Delete an order</button> 
   <button class="tablinks" onclick="openTab(event, 'create-item')" id="create-item-tab-btn">Create an item</button>
   <button class="tablinks" onclick="openTab(event, 'listall-item')" id="listall-item-tab-btn">List all items of an Order</button>
@@ -213,6 +214,63 @@
     </div>
   </div>
 </div>
+
+<div id="list-order-details" class="tabcontent">
+    <h3>List order details</h3> 
+    <div class="container"> 
+  
+      <div class="col-md-12" id="form_data"> 
+        <div class="form-horizontal"> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="order_details_id">Order ID:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="order_details_id"
+                        placeholder="Enter Order ID">
+                </div>
+            </div>
+        </div>
+         
+        <br/>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10"> 
+                  <button type="submit" class="btn btn-success" id="list-order-details-btn">List Order Details</button> 
+              </div>
+          
+              <br/>
+              <div class="table-responsive col-md-12" id="list_order_details_results">
+                  <table class="table-striped">
+                      <thead>
+                          <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">Order Name</th>
+                              <th class="col-md-4">Address</th>
+                              <th class="col-md-3">Date of Creation</th>
+                          </tr>
+                      </thead>
+                  </table>
+                  <br>
+              </div>
+              <br/>
+              <div class="table-responsive col-md-12" id="list_order_item_results">
+                <table class="table-striped">
+                    <thead>
+                        <tr>
+                              <th class="col-md-1">ID</th>
+                              <th class="col-md-4">OrderID</th>
+                              <th class="col-md-4">ProductID</th>
+                              <th class="col-md-3">Price</th>
+                              <th class="col-md-3">Quantity</th>
+                              <th class="col-md-4">Status</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br>
+            </div>
+          </div>
+  
+      </div>
+    </div>
+  </div>
 
 <div id="delete" class="tabcontent">
     <h3>Delete an order</h3> 
