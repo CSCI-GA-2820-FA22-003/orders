@@ -208,6 +208,44 @@ $(function () {
         });
     });
 
+    // List Item Details
+    $("#item-details-btn").click(function () {
+
+        var order_id = $("#order_id_item_details").val();
+        var item_id = $("#id_item_details").val();
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/api/orders/" + order_id + "/items/" + item_id,
+            data: ''
+        })
+
+        ajax.done(function (res) {
+            $("#list_item_details").empty();
+            $("#list_item_details").append('<table class="table-striped">');
+            var header = '<tr>'
+            header += '<th>Item ID</th>'
+            header += '<th>Order_id</th>'
+            header += '<th>Product_id</th>'
+            header += '<th>Price</th>'
+            header += '<th>Quantity</th>'
+            header += '<th>Status</th></tr>'
+            $("#list_item_details").append(header); 
+            var item = res;
+            var row = "<tr><td>" + item.id + "</td><td>" + item.order_id + "</td><td>" 
+                        + item.product_id + "</td><td>" + item.price + "</td><td>" 
+                        + item.quantity + "</td><td>" + item.status + "</td></tr>";
+            $("#list_item_details").append(row);
+            $("#list_item_details").append('</table>');
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+    });
+
     // List all Items within the specified price range
     $("#listall-item-pricerange-btn").click(function () {
 

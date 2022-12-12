@@ -269,8 +269,8 @@ class ItemResource(Resource):
     @api.marshal_with(item_model)
     def get(self, order_id, item_id):
         """
-        Retrieve a single Order
-        This endpoint will return an Order based on it's id
+        Retrieve a single item
+        This endpoint will return an item based on it's id
         """
         app.logger.info("Request for item with id [%s]", item_id)
         order = Order.find(order_id)
@@ -410,7 +410,7 @@ class PriceQuery(Resource):
             res["address"] = order.address
             res["date_created"] = order.date_created.isoformat()
             res["items"] = value
-            order_final.append(order.serialize())
+            order_final.append(res)
         return order_final, status.HTTP_200_OK
 
 
