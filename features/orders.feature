@@ -21,7 +21,10 @@ Scenario: Create an Order
     And I set the "Order Name" to "Order1"
     And I set the "Order Addr" to "Addr1"
     And I press the "Create" button
-    Then I should see the message "Success"
+    And I press the "Order-Details-Tab" button
+    And I set the "Order Details ID" to "<base> + 5"
+    And I press the "List-Order-Details" button
+    Then I should see "Order1" in the row includes "Addr1" of "List order details" table
 
 Scenario: Update an Order
     When I visit the "Home Page"
@@ -30,7 +33,10 @@ Scenario: Update an Order
     And I set the "Update Order Name" to "Order11"
     And I set the "Update Order Addr" to "Addr11"
     And I press the "Update" button
-    Then I should see the message "Success"
+    And I press the "Order-Details-Tab" button
+    And I set the "Order Details ID" to "<base> + 1"
+    And I press the "List-Order-Details" button
+    Then I should see "Order11" in the row includes "Addr11" of "List order details" table
 
 Scenario: List All Order
     When I visit the "Home Page"
@@ -98,7 +104,10 @@ Scenario: Update An Item
     And I set the "Update Item Quantity" to "2"
     And I set the "Update Item Status" to "bad"
     And I press the "Update-Item" button
-    Then I should see the message "Success"
+    And I press the "Order-Details-Tab" button
+    And I set the "Order Details ID" to "<base> + 1"
+    And I press the "List-Order-Details" button
+    Then I should see "233" in the row includes "100" of "List order item" table
 
 Scenario: Delete An Item
     When I visit the "Home Page"
