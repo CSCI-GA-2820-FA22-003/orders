@@ -78,6 +78,24 @@ class TestRestApiServer(TestCase):
         """ It should call the home page """
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_404(self):
+        """ It should get the 404 page """
+        response = self.client.get("/nonsense")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_415(self):
+        """ It should get the 415 page """
+        test_order = OrderFactory()
+        logging.debug("Test order: %s", test_order.serialize())
+        response = self.client.post("/api/orders", json=test_order.serialize(), headers={"Content-Type": "nonsense"})
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_405(self):
+        """ It should get the 405 page """
+        # It should be a post resource
+        response = self.client.get("/api/orders_prices")
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_get_order_list(self):
         """It should Get a list of orders"""

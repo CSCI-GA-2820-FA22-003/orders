@@ -102,6 +102,7 @@ class OrderCollection(Resource):
         This endpoint will create an Order based the data in the body that is posted
         """
         app.logger.info('Request to Create a Order')
+        check_content_type("application/json")
         order = Order()
         app.logger.debug('Payload = %s', api.payload)
         order.deserialize(api.payload)
