@@ -13,6 +13,7 @@ from flask import abort, request, render_template, make_response, jsonify
 from service.models import Item, Order
 from service.models import db
 from flask_restx import Resource, fields
+from datetime import date
 
 # Import Flask application
 from . import app, api
@@ -118,6 +119,9 @@ class OrderCollection(Resource):
         check_content_type("application/json")
         order = Order()
         app.logger.debug('Payload = %s', api.payload)
+        data = api.payload
+        if "date_created" in data.keys():
+            check_valid_date(data["date_created"])
         order.deserialize(api.payload)
         order.create()
         app.logger.info('Order with new id [%s] created!', order.id)
@@ -149,6 +153,7 @@ class OrderResource(Resource):
         This endpoint will return an Order based on it's id
         """
         app.logger.info("Request to Retrieve a order with id [%s]", order_id)
+        check_valid_id(order_id)
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
@@ -168,16 +173,15 @@ class OrderResource(Resource):
         This endpoint will update an order based the body that is posted
         """
         app.logger.info('Request to Update an order with id [%s]', order_id)
-        try:
-            int(order_id)
-        except ValueError:
-            abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
+        check_valid_id(order_id)
 
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
         app.logger.debug('Payload = %s', api.payload)
         data = api.payload
+        if "date_created" in data.keys():
+            check_valid_date(data["date_created"])
         order.deserialize(data)
         order.id = order_id
         order.update()
@@ -195,6 +199,7 @@ class OrderResource(Resource):
         This endpoint will delete an Order based the id specified in the path
         """
         app.logger.info('Request to Delete an order with id [%s]', order_id)
+        check_valid_id(order_id)
         order = Order.find(order_id)
         if order:
             items_retrieve = Item.find_by_order_id(order_id)
@@ -223,6 +228,7 @@ class ItemCollection(Resource):
     def get(self, order_id):
         """ Returns all of the Orders """
         app.logger.info("Request for all Items for Order with id: %s", order_id)
+        check_valid_id(order_id)
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
@@ -244,6 +250,7 @@ class ItemCollection(Resource):
         """
         app.logger.info("Request to create an item for order")
         check_content_type("application/json")
+        check_valid_id(order_id)
 
         order = Order.find(order_id)
         if not order:
@@ -252,6 +259,9 @@ class ItemCollection(Resource):
         data = request.get_json()
 
         app.logger.debug("Payload = %s", data)
+        check_valid_price(data["price"])
+        check_valid_id(data["product_id"])
+        check_valid_quantity(data["quantity"])
         item = Item()
         item.deserialize(data)
         item.order_id = order_id
@@ -287,6 +297,9 @@ class ItemResource(Resource):
         This endpoint will return an Order based on it's id
         """
         app.logger.info("Request for item with id [%s]", item_id)
+        check_valid_id(order_id)
+        check_valid_id(item_id)
+
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, f"Order with id '{order_id}' was not found.")
@@ -315,6 +328,9 @@ class ItemResource(Resource):
             "Request to update Order %s for Item id: %s", (item_id, order_id)
         )
         check_content_type("application/json")
+        check_valid_id(order_id)
+        check_valid_id(item_id)
+
         order = Order.find(order_id)
         if not order:
             abort(status.HTTP_404_NOT_FOUND, f"Item with id '{order_id}' was not found.")
@@ -328,6 +344,9 @@ class ItemResource(Resource):
             )
 
         # Update from the json in the body of the request
+        check_valid_price(api.payload["price"])
+        check_valid_id(api.payload["product_id"])
+        check_valid_quantity(api.payload["quantity"])
         item.deserialize(api.payload)
         item.id = item_id
         item.update()
@@ -348,6 +367,8 @@ class ItemResource(Resource):
 
         app.logger.info(
             "Request to delete item with order_id [%s] and item_id [%s]", order_id, item_id)
+        check_valid_id(order_id)
+        check_valid_id(item_id)
 
         order = Order.find(order_id)
         if not order:
@@ -407,11 +428,8 @@ class PriceQuery(Resource):
         max_price = data['max_price']
         min_price = data['min_price']
 
-        try:
-            int(max_price)
-            int(min_price)
-        except ValueError as e:
-            abort(status.HTTP_400_BAD_REQUEST, "Invalid price: {}".format(e))
+        check_valid_price(max_price)
+        check_valid_price(min_price)
 
         item_list = Item.find_by_price(max_price, min_price)
         if not item_list:
@@ -437,6 +455,36 @@ class PriceQuery(Resource):
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+def check_valid_id(s):
+    """Check whether a string could be converted into a num. for ID"""
+    try:
+        int(s)
+    except ValueError as e:
+        abort(status.HTTP_400_BAD_REQUEST, "Invalid ID: {}".format(e))
+
+
+def check_valid_price(s):
+    """Check whether a string could be converted to float"""
+    try:
+        float(s)
+    except ValueError as e:
+        abort(status.HTTP_400_BAD_REQUEST, "Invalid price: {}".format(e))
+
+
+def check_valid_quantity(s):
+    """Check whether a string could be converted to float"""
+    try:
+        int(s)
+    except ValueError as e:
+        abort(status.HTTP_400_BAD_REQUEST, "Invalid quantity: {}".format(e))
+
+
+def check_valid_date(s):
+    """Check whether a string could be converted to date"""
+    try:
+        date.fromisoformat(s)
+    except ValueError as e:
+        abort(status.HTTP_400_BAD_REQUEST, "Invalid date: {}".format(e))
 
 
 def init_db():

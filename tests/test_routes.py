@@ -79,6 +79,11 @@ class TestRestApiServer(TestCase):
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
     
+    def test_reset(self):
+        """ It should reset """
+        response = self.client.get("/reset")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
     def test_404(self):
         """ It should get the 404 page """
         response = self.client.get("/nonsense")
@@ -174,6 +179,15 @@ class TestRestApiServer(TestCase):
         self.assertEqual(new_order["address"], test_order.address)
         self.assertEqual(date.fromisoformat(new_order["date_created"]), test_order.date_created)
 
+    def test_create_invalid_date_order(self):
+        """It should Create a new order"""
+        test_order = OrderFactory()
+        data = test_order.serialize()
+        data["date_created"] = "nonsense"
+        logging.debug("Test order: %s", data)
+        response = self.client.post("/api/orders", json=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_update_order(self):
         """It should update an existing order"""
         # create a order to update
@@ -215,10 +229,7 @@ class TestRestApiServer(TestCase):
         # update the order
         new_order = response.get_json()
         response = self.client.put(f"/api/orders/x", json=new_order)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        data = response.get_json()
-        logging.debug("Response data = %s", data)
-        self.assertIn("Order with id 'x' was not found.", data["message"])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_order(self):
         """It should Delete a order"""
@@ -419,6 +430,31 @@ class TestRestApiServer(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_item_wrong_quantity(self):
+        """It should not Update an item in an order for a wrong quantity"""
+        # create an item
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"/api/orders/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["quantity"] = "xxxx"
+
+        # send the update back
+        response = self.client.put(
+            f"/api/orders/{test_order.id}/items/{item_id}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_item_with_order_not_exist(self):
         """It should not update item if order not exists"""
