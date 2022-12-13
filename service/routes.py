@@ -407,6 +407,12 @@ class PriceQuery(Resource):
         max_price = data['max_price']
         min_price = data['min_price']
 
+        try:
+            int(max_price)
+            int(min_price)
+        except ValueError as e:
+            abort(status.HTTP_400_BAD_REQUEST, "Invalid price: {}".format(e))
+
         item_list = Item.find_by_price(max_price, min_price)
         if not item_list:
             abort(status.HTTP_404_NOT_FOUND, "Items not found")

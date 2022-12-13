@@ -610,3 +610,13 @@ class TestRestApiServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
+
+    def test_invalid_price_min_max(self):
+        """It should get all Items of an Order that are between max and min price"""
+        # retrieve it back
+        response = self.client.post(
+            f"/api/orders_prices",
+            json={'max_price': "bbb", 'min_price': "aaa"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
