@@ -11,6 +11,7 @@ its customer id. A good action for the order API is to be able to cancel an orde
 
 from flask import abort, request, render_template, make_response, jsonify
 from service.models import Item, Order
+from service.models import db
 from flask_restx import Resource, fields
 
 # Import Flask application
@@ -66,6 +67,18 @@ def index():
 def healthcheck():
     """Let them know our heart is still beating"""
     return make_response(jsonify(status=200, message="OK"), status.HTTP_200_OK)
+
+
+@app.route("/reset")
+def reset():
+    """Reset the database"""
+    app.logger.info("Resetting the database...")
+    db.session.commit()
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+    app.logger.info("Reset succeed!")
+    return make_response(jsonify(status=200, message="Reset"), status.HTTP_200_OK)
 
 
 ######################################################################
