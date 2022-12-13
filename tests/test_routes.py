@@ -13,7 +13,7 @@ from service import app
 from service.models import Order, Item, db
 from service.common import status  # HTTP Status Codes
 from tests.factories import OrderFactory, ItemFactory
-from datetime import date
+from datetime import date, timedelta
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -69,6 +69,10 @@ class TestRestApiServer(TestCase):
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
+    def test_healthcheck(self):
+        "It should call the healthcheck to see the heartbeat"
+        response = self.client.get("/health")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_index(self):
         """ It should call the home page """
@@ -107,6 +111,17 @@ class TestRestApiServer(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["name"], test_order.name)
+
+    def test_get_order_by_date_wrong_date(self):
+        """It should not get a single order by date for wrong date"""
+        # get the id of a order
+        test_order = self._create_orders(1)[0]
+        
+        response = self.client.get(f"api/orders/{test_order.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get(f"api/orders_date/{test_order.date_created + timedelta(weeks = 100)}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_order_not_found(self):
         """It should not Get a order thats not found"""
@@ -171,6 +186,21 @@ class TestRestApiServer(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("Order with id '1000' was not found.", data["message"])
+
+    def test_update_order_not_found_wrong_type(self):
+        """It should not Update a order (of wrong datatype) thats not found"""
+        # create a order to update
+        test_order = OrderFactory()
+        response = self.client.post("/api/orders", json=test_order.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the order
+        new_order = response.get_json()
+        response = self.client.put(f"/api/orders/x", json=new_order)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("Order with id 'x' was not found.", data["message"])
 
     def test_delete_order(self):
         """It should Delete a order"""
@@ -243,6 +273,25 @@ class TestRestApiServer(TestCase):
         self.assertEqual(data["price"], item.price)
         self.assertEqual(data["quantity"], item.quantity)
         self.assertEqual(data["status"], item.status)
+
+    def test_get_item_list_wrong_order_get(self):
+        """It should not get Items of a wrong Order Get Request"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        
+        resp = self.client.get(f"/api/orders/{test_order.id + 10}/items")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_item_list_post(self):
+        """It should not get Items of a wrong Order Post Request"""
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"/api/orders/{test_order.id + 10}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_item_list(self):
         """It should Get all Items of an Order"""
@@ -327,6 +376,31 @@ class TestRestApiServer(TestCase):
         logging.debug(data)
         self.assertEqual(data["id"], item_id)
         self.assertEqual(data["price"], 3.75)
+
+    def test_update_item_wrong_item_id(self):
+        """It should not Update an item in an order for a wrong item id"""
+        # create an item
+        test_order = self._create_orders(1)[0]
+        item = ItemFactory()
+        response = self.client.post(
+            f"/api/orders/{test_order.id}/items",
+            json=item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+        data["price"] = 3.75
+
+        # send the update back
+        response = self.client.put(
+            f"/api/orders/{test_order.id}/items/{item_id + 10}",
+            json=data,
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_item_with_order_not_exist(self):
         """It should not update item if order not exists"""
