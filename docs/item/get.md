@@ -2,7 +2,7 @@
 
 Retrieve an item in an order. This endpoint will return an item based on it's id
 
-**URL** : `/orders/<int:order_id>/items/<int:item_id>`
+**URL** : `/api/orders/<int:order_id>/items/<int:item_id>`
 
 **Method** : `GET`
 
@@ -16,7 +16,7 @@ Retrieve an item in an order. This endpoint will return an item based on it's id
 
 **Content examples**
 
-For an item created with `/orders/<int:order_id>/items/<int:item_id>` POST request. Use the item id to retrieve the item in an order, You would get an item json with format like this:
+For an item created with `/api/orders/<int:order_id>/items/<int:item_id>` POST request. Use the item id to retrieve the item in an order, You would get an item json with format like this:
 
 ```json
 {
@@ -31,7 +31,7 @@ For an item created with `/orders/<int:order_id>/items/<int:item_id>` POST reque
 
 ## Failure Response
 
-If the order item with `/orders/<int:order_id>/items/<int:item_id>` does not exists, it would return a 404 back. For example of `/orders/123/items/30` that is a invalid id:
+If the order item with `/api/orders/<int:order_id>/items/<int:item_id>` does not exists, it would return a 404 back. For example of `/orders/123/items/30` that is a invalid id:
 
 ```json
 {

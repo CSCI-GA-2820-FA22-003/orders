@@ -2,7 +2,7 @@
 
 Delete an item. This endpoint will delete an item based on the id specified in the path.
 
-**URL** : `/orders/<int:order_id>/items/<int:item_id>`
+**URL** : `/api/orders/<int:order_id>/items/<int:item_id>`
 
 **Method** : `DELETE`
 

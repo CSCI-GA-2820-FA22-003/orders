@@ -38,7 +38,7 @@ A collection of order items created from products and quantity. Logo made by [No
 | Description                       | Endpoint                      | Issue |
 | --------------------------------- | ----------------------------- | ----- |
 | Read order based on price range   | GET `/api/orders_date/{date}` | [link](docs/order/price.md)      |
-| Read order based on item quantity | POST `/orders/orders_prices/`    | [link](docs/order/date.md)      |
+| Read order based on item quantity | POST `/api/orders/orders_prices/`    | [link](docs/order/date.md)      |
 
 ## License
 
