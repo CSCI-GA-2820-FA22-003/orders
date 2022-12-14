@@ -35,12 +35,13 @@ item_model = api.inherit(
 
 # Define the model so that the docs reflect what can be sent
 create_model = api.model('Order', {
-    'name': fields.String(required=True, description='The name of the Order'),
+    'name': fields.String(required=True, description='The name of the Order', default="Joe"),
     'address': fields.String(
         required=True,
-        description='The address of the order(e.g.: 9609 Helen Rd. Wisconsin Rapids, WI 54494).'
+        description='The address of the order(e.g.: 9609 Helen Rd. Wisconsin Rapids, WI 54494).',
+        default="9609 Helen Rd. Wisconsin Rapids, WI 54494"
         ),
-    'date_created': fields.Date(description='The date order created'),
+    'date_created': fields.Date(description='The date order created', default="2022-12-14"),
     'items': fields.List(fields.Nested(item_model, description='List of items that order contains'))
 })
 
@@ -49,6 +50,11 @@ order_model = api.inherit(
     create_model,
     {'id': fields.Integer(readOnly=True, description='The unique id assigned internally by service'), }
 )
+
+price_model = api.model('Price', {
+    'min_price': fields.Float(required=True, description='The maximal price in the query', default="0.0"),
+    'max_price': fields.Float(required=True, description='The minimal price in the query', default="100.0")
+})
 
 
 ######################################################################
@@ -226,7 +232,7 @@ class ItemCollection(Resource):
     @api.doc('list_items')
     @api.marshal_list_with(item_model)
     def get(self, order_id):
-        """ Returns all of the Orders """
+        """ Returns all items under an order"""
         app.logger.info("Request for all Items for Order with id: %s", order_id)
         check_valid_id(order_id)
         order = Order.find(order_id)
@@ -392,7 +398,7 @@ class DateQuery(Resource):
     @api.doc('order_retrieve_based_on_date')
     @api.marshal_list_with(order_model)
     def get(self, date_iso):
-        """ Returns all of the Orders """
+        """ Returns all of the Orders under a single date in ISO format"""
         app.logger.info(
             "Request to retrieve Orders based on date %s", (date_iso)
         )
@@ -420,8 +426,9 @@ class PriceQuery(Resource):
     # ------------------------------------------------------------------
     @api.doc('list_all_items_prices')
     @api.marshal_list_with(order_model)
+    @api.expect(price_model)
     def post(self):
-        """ Returns all of the Orders """
+        """ Returns all of the Orders within the price range"""
         app.logger.info("Request for all Orders in the price range")
 
         data = request.get_json()
