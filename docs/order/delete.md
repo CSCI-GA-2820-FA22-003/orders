@@ -2,7 +2,7 @@
 
 Delete an Order. This endpoint will delete an Order based the id specified in the path.
 
-**URL** : `/orders/<int:order_id>`
+**URL** : `/api/orders/<int:order_id>`
 
 **Method** : `DELETE`
 
