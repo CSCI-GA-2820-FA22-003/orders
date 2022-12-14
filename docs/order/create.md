@@ -2,7 +2,7 @@
 
 Create an order that does not include any item. User should provide name, address of the order. An ISO time tag is optional.
 
-**URL** : `/order`
+**URL** : `/api/order`
 
 **Method** : `POST`
 

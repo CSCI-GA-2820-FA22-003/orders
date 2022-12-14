@@ -2,7 +2,7 @@
 
 Returns all of the orders.
 
-**URL** : `/orders`
+**URL** : `/api/orders`
 
 **Method** : `GET`
 

@@ -2,7 +2,7 @@
 
 Retrieve a single order. This endpoint will return an Order based on it's id
 
-**URL** : `/order/<int:order_id>`
+**URL** : `/api/order/<int:order_id>`
 
 **Method** : `GET`
 

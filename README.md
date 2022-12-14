@@ -18,27 +18,27 @@ A collection of order items created from products and quantity. Logo made by [No
 
 | Description     | Endpoint                        | Docs |
 | --------------- | ------------------------------- | ---- |
-| Delete an order | DELETE `/orders/{int:order_id}` | [link](docs/order/delete.md)     |
-| Read an order   | GET `/orders/{int:order_id}`    | [link](docs/order/read.md)     |
-| Update an order | PUT `/orders/{int: order_id}/`  | [link](docs/order/update.md)     |
-| Create an order | POST `/order/`                  | [link](docs/order/create.md)     |
-| List orders     | GET `/orders/`                  | [link](docs/order/list.md)    |
+| Delete an order | DELETE `/api/orders/{int:order_id}` | [link](docs/order/delete.md)     |
+| Read an order   | GET `/api/orders/{int:order_id}`    | [link](docs/order/read.md)     |
+| Update an order | PUT `/api/orders/{int: order_id}/`  | [link](docs/order/update.md)     |
+| Create an order | POST `/api/order/`                  | [link](docs/order/create.md)     |
+| List orders     | GET `/api/orders/`                  | [link](docs/order/list.md)    |
 
 ### Basic Item Operations
 
 | Description                | Endpoint                                    | Docs |
 | -------------------------- | ------------------------------------------- | ---- |
-| Delete an item in an order | DELETE `/orders/{order_id}/items/{item_id}` | [link](docs/item/delete.md)  |
-| Add an item to an order    | POST `/orders/{order_id}/items`             | [link](docs/item/create.md)  |
-| Get the detail of an item  | GET `/orders/{order_id}/items/{item_id}`    | [link](docs/item/get.md)  |
-| Update an item in an order | PUT `/orders/{order_id}/items/{item_id}`    | [link](docs/item/update.md)  |
+| Delete an item in an order | DELETE `/api/orders/{order_id}/items/{item_id}` | [link](docs/item/delete.md)  |
+| Add an item to an order    | POST `/api/orders/{order_id}/items`             | [link](docs/item/create.md)  |
+| Get the detail of an item  | GET `/api/orders/{order_id}/items/{item_id}`    | [link](docs/item/get.md)  |
+| Update an item in an order | PUT `/api/orders/{order_id}/items/{item_id}`    | [link](docs/item/update.md)  |
 
 ### Advanced Operations
 
 | Description                       | Endpoint                      | Issue |
 | --------------------------------- | ----------------------------- | ----- |
-| Read order based on price range   | POST `/orders/advanced/price` | TBD      |
-| Read order based on item quantity | POST `/orders/advanced/num`    | TBD      |
+| Read order based on price range   | GET `/api/orders_date/{date}` | [link](docs/order/price.md)      |
+| Read order based on item quantity | POST `/orders/orders_prices/`    | [link](docs/order/date.md)      |
 
 ## License
 

@@ -2,7 +2,7 @@
 
 Updates an item in an order.
 
-**URL** : `/orders/<int:order_id>/items/<int:item_id>`
+**URL** : `/api/orders/<int:order_id>/items/<int:item_id>`
 
 **Method** : `PUT`
 
@@ -29,7 +29,7 @@ Update an item based on new information for an existing entry. For an order with
 }
 ```
 
-I would like to change price of "7.5" into "4.5" at that moment. Send `PUT` request to `/orders/123/items/30` with body of:
+I would like to change price of "7.5" into "4.5" at that moment. Send `PUT` request to `/api/orders/123/items/30` with body of:
 
 ```json
 {

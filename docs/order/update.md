@@ -2,7 +2,7 @@
 
 Returns all of the orders.
 
-**URL** : `/orders/<int:order_id>`
+**URL** : `/api/orders/<int:order_id>`
 
 **Method** : `PUT`
 
