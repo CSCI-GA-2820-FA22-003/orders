@@ -41,7 +41,7 @@ For an order like:
 }
 ```
 
-You send a request of `/orders_prices/` with message
+You send a request of `/api/orders_prices/` with message
 
 ```json
 {
