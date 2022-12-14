@@ -1,4 +1,4 @@
-# Update an order
+# Delete an order
 
 Delete an item. This endpoint will delete an item based on the id specified in the path.
 

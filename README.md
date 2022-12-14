@@ -19,7 +19,7 @@ A collection of order items created from products and quantity. Logo made by [No
 | Description     | Endpoint                        | Docs |
 | --------------- | ------------------------------- | ---- |
 | Delete an order | DELETE `/api/orders/{int:order_id}` | [link](docs/order/delete.md)     |
-| Read an order   | GET `/api/orders/{int:order_id}`    | [link](docs/order/read.md)     |
+| Get an order   | GET `/api/orders/{int:order_id}`    | [link](docs/order/get.md)     |
 | Update an order | PUT `/api/orders/{int: order_id}/`  | [link](docs/order/update.md)     |
 | Create an order | POST `/api/order/`                  | [link](docs/order/create.md)     |
 | List orders     | GET `/api/orders/`                  | [link](docs/order/list.md)    |
